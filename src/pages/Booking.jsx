@@ -6,12 +6,18 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const services = [
-  'Limpieza Dental',
+  'Odontología General',
+  'Estética',
   'Ortodoncia',
-  'Blanqueamiento',
-  'Implantes',
-  'Extracción',
-  'Revisión General'
+  'Prostodoncia (Prótesis dentales)',
+  'Odontopediatría',
+  'Exodoncia',
+  'Cirugía Maxilofacial',
+  'Endodoncia',
+  'Periodoncia',
+  'Dolor Orofacial',
+  'Implantes Dentales',
+  'Implantología'
 ];
 
 export default function Booking() {

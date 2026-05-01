@@ -4,27 +4,45 @@ import { Link } from 'react-router-dom';
 
 const services = [
   {
-    title: 'Limpieza Dental Profunda',
-    description: 'Eliminación avanzada de placa y sarro utilizando tecnología ultrasónica. Un tratamiento esencial para mantener tus encías sanas y un aliento fresco duradero.',
+    title: 'Odontología General',
+    description: 'Se encarga de la atención primaria, diagnóstico, limpiezas y tratamientos preventivos básicos para toda la familia.',
     icon: <Sparkles size={28} strokeWidth={2.5} />,
     image: '/assets/service-cleaning.jpg'
   },
   {
-    title: 'Ortodoncia Invisible',
-    description: 'Alinea tu sonrisa con la máxima discreción. Especialistas en Invisalign y ortodoncia interceptiva para todas las edades con resultados garantizados.',
+    title: 'Ortodoncia',
+    description: 'Diagnostica, previene y corrige los dientes mal alineados y problemas de maloclusión con tecnología de vanguardia.',
     icon: <Activity size={28} strokeWidth={2.5} />,
     image: '/assets/service-orthodontics.jpg'
   },
   {
-    title: 'Blanqueamiento Láser',
-    description: 'Recupera hasta 8 tonos de blancura en una sola sesión de 45 minutos. Proceso seguro, indoloro y con resultados visibles de manera inmediata.',
-    icon: <Sun size={28} strokeWidth={2.5} />,
-    image: '/assets/service-whitening.jpg'
+    title: 'Periodoncia',
+    description: 'Se enfoca en la salud de las encías y los tejidos de soporte del diente (hueso) para prevenir enfermedades periodontales.',
+    icon: <Shield size={28} strokeWidth={2.5} />,
+    image: '/assets/service-periodontics.jpg'
   },
   {
-    title: 'Implantes y Rehabilitación',
-    description: 'Soluciones permanentes para la pérdida de piezas dentales. Cirugía guiada por computadora para una recuperación rápida y resultados naturales.',
+    title: 'Endodoncia',
+    description: 'Trata las enfermedades de la pulpa dental y los conductos radiculares mediante tratamientos de conductos precisos.',
     icon: <Zap size={28} strokeWidth={2.5} />,
+    image: '/assets/service-endodontics.jpg'
+  },
+  {
+    title: 'Cirugía Oral y Maxilofacial',
+    description: 'Maneja extracciones complejas (terceros molares), implantes y cirugías reconstructivas de la boca y mandíbula.',
+    icon: <Shield size={28} strokeWidth={2.5} />,
+    image: '/assets/service-implants.jpg'
+  },
+  {
+    title: 'Odontopediatría',
+    description: 'Especialidad dedicada exclusivamente a la atención dental de niños y adolescentes en un ambiente amigable.',
+    icon: <Users size={28} strokeWidth={2.5} />,
+    image: '/assets/service-pediatric.jpg'
+  },
+  {
+    title: 'Prostodoncia / Rehabilitación Oral',
+    description: 'Se especializa en diseñar y colocar prótesis, coronas y puentes para reemplazar dientes perdidos y devolver la función.',
+    icon: <Star size={28} strokeWidth={2.5} />,
     image: '/assets/service-implants.jpg'
   }
 ];
@@ -50,7 +68,7 @@ export default function Home() {
                 fontWeight: '800'
               }}>Cuentan Historias</span>
             </h1>
-            <p>En DentalCare combinamos tecnología de vanguardia con un trato humano excepcional para cuidar de tu salud bucal.</p>
+            <p>Especialistas en todas las ramas de la odontología moderna. Brindamos atención integral, desde prevención básica hasta rehabilitaciones complejas, con la calidez y profesionalismo que tu sonrisa merece.</p>
             <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
               <Link to="/booking" className="btn btn-primary" style={{ padding: '1rem 2rem' }}>
                 Agendar Cita <ChevronRight size={20} />
