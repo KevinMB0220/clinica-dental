@@ -6,9 +6,9 @@ export default function Footer() {
       <div className="container">
         <div className="grid-3" style={{ marginBottom: '3rem' }}>
           <div>
-            <h3 style={{ color: 'white', marginBottom: '1.5rem' }}>DentalCare</h3>
+            <h3 style={{ color: 'white', marginBottom: '1.5rem' }}>Turrialba Dental Care</h3>
             <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '1.5rem' }}>
-              Dedicados a tu sonrisa con la mejor tecnología y cuidado profesional.
+              Dra. Sharlene Torres Castillo - Dedicados a tu sonrisa con la mejor tecnología y cuidado profesional.
             </p>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <a href="#" style={{ color: 'white' }}><Facebook size={24} /></a>
@@ -21,13 +21,13 @@ export default function Footer() {
             <h3 style={{ color: 'white', marginBottom: '1.5rem' }}>Contacto</h3>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1rem', color: 'rgba(255,255,255,0.7)' }}>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Phone size={18} /> +1 234 567 890
+                <Phone size={18} /> 8928 1259 / 2556 2673
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Mail size={18} /> info@clinicadental.com
+                <Mail size={18} /> odontoshar22@hotmail.com
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <MapPin size={18} /> Calle Principal 123, Ciudad
+                <MapPin size={18} /> Turrialba Centro, frente a la clínica Arias&Soto
               </li>
             </ul>
           </div>
@@ -43,7 +43,7 @@ export default function Footer() {
         </div>
         
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '2rem', textAlign: 'center', color: 'rgba(255,255,255,0.5)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <p>&copy; {new Date().getFullYear()} DentalCare. Todos los derechos reservados.</p>
+          <p>&copy; {new Date().getFullYear()} Turrialba Dental Care. Todos los derechos reservados.</p>
           <a href="/login" style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.75rem', textDecoration: 'none' }}>Acceso Administrativo</a>
         </div>
       </div>
