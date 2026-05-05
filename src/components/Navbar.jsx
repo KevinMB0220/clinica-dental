@@ -10,7 +10,7 @@ export default function Navbar() {
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
         <Link to="/" className="logo">
           <Stethoscope size={32} />
-          <span>DentalCare</span>
+          <span>Turrialba Dental Care</span>
         </Link>
         
         <ul className="nav-links">

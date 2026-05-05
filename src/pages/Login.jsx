@@ -48,7 +48,7 @@ export default function Login() {
           <div className="text-center" style={{ marginBottom: '2rem' }}>
             <h2 style={{ marginBottom: '0.5rem' }}>{isRegister ? 'Crear Cuenta' : 'Iniciar Sesión'}</h2>
             <p style={{ color: 'var(--text-muted)' }}>
-              {isRegister ? 'Únete a DentalCare para gestionar tus citas' : 'Bienvenido de nuevo a DentalCare'}
+              {isRegister ? 'Únete a Turrialba Dental Care para gestionar tus citas' : 'Bienvenido de nuevo a Turrialba Dental Care'}
             </p>
           </div>
 
