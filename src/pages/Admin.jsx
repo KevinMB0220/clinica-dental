@@ -24,7 +24,6 @@ export default function Admin() {
 
   const isAdmin = user.role === 'admin';
   
-  // Filter by user if not admin
   const userAppointments = isAdmin 
     ? appointments 
     : appointments.filter(app => app.userId === user.email);
@@ -45,66 +44,68 @@ export default function Admin() {
   };
 
   return (
-    <section style={{ minHeight: '80vh' }}>
-      <div className="container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-          <div>
-            <h2>{isAdmin ? 'Panel de Administración' : 'Mis Citas'}</h2>
-            <p style={{ color: 'var(--text-muted)' }}>
-              {isAdmin ? 'Gestiona las citas de todos los pacientes' : `Hola ${user.name}, aquí puedes ver tus citas agendadas`}
-            </p>
+    <section className="container dashboard-section">
+      <div className="flex-between" style={{ marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <h2 style={{ fontSize: '2rem', marginBottom: '0.25rem' }}>{isAdmin ? 'Analytics & Appointments' : 'My Schedule'}</h2>
+          <p style={{ color: 'var(--text-muted)' }}>
+            {isAdmin ? 'Manage patient records and appointments.' : `Hello ${user.name}, view and manage your appointments here.`}
+          </p>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div style={{ position: 'relative', width: '250px' }}>
+            <Search size={16} style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <input 
+              type="text" 
+              className="form-control" 
+              placeholder="Search..." 
+              style={{ paddingLeft: '3rem', borderRadius: 'var(--radius-pill)' }}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
           
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-            <div style={{ position: 'relative', width: '250px' }}>
-              <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-              <input 
-                type="text" 
-                className="form-control" 
-                placeholder="Buscar..." 
-                style={{ paddingLeft: '2.5rem' }}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            
-            {!isAdmin && (
-               <Link to="/booking" className="btn btn-primary" style={{ padding: '0.75rem' }}>
-                 <Plus size={20} /> Agendar
-               </Link>
-            )}
+          {!isAdmin && (
+             <Link to="/booking" className="btn btn-primary">
+               Schedule <Plus size={16} style={{ marginLeft: '4px' }} />
+             </Link>
+          )}
 
-            {isAdmin && (
-              <button 
-                className="btn btn-outline" 
-                onClick={() => {
-                  const headers = 'Nombre,Email,Teléfono,Servicio,Fecha,Hora,Estado\n';
-                  const rows = appointments.map(a => `${a.name},${a.email},${a.phone},${a.service},${a.date},${a.time},${a.status}`).join('\n');
-                  const blob = new Blob([headers + rows], { type: 'text/csv' });
-                  const url = window.URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.setAttribute('href', url);
-                  a.setAttribute('download', 'citas-dentales.csv');
-                  a.click();
-                }}
-                style={{ padding: '0.75rem' }}
-                title="Descargar CSV"
-              >
-                <Download size={20} />
-              </button>
-            )}
-          </div>
+          {isAdmin && (
+            <button 
+              className="btn btn-outline" 
+              onClick={() => {
+                const headers = 'Name,Email,Phone,Service,Date,Time,Status\n';
+                const rows = appointments.map(a => `${a.name},${a.email},${a.phone},${a.service},${a.date},${a.time},${a.status}`).join('\n');
+                const blob = new Blob([headers + rows], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.setAttribute('href', url);
+                a.setAttribute('download', 'appointments.csv');
+                a.click();
+              }}
+              title="Download CSV"
+            >
+              Export <Download size={16} style={{ marginLeft: '4px' }} />
+            </button>
+          )}
         </div>
+      </div>
 
-        <div className="glass-card" style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px' }}>
-            <thead style={{ backgroundColor: 'rgba(14, 165, 233, 0.05)', borderBottom: '1px solid var(--border)' }}>
+      <div className="dashboard-card" style={{ padding: '0', overflow: 'hidden' }}>
+        <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid var(--border-light)' }}>
+          <h3 style={{ fontSize: '1.1rem' }}>{isAdmin ? 'All Appointments' : 'Upcoming Visits'}</h3>
+        </div>
+        <div className="dashboard-table-container" style={{ boxShadow: 'none', borderRadius: 0 }}>
+          <table>
+            <thead>
               <tr>
-                <th style={{ padding: '1rem 1.5rem' }}>Paciente</th>
-                <th style={{ padding: '1rem 1.5rem' }}>Servicio</th>
-                <th style={{ padding: '1rem 1.5rem' }}>Fecha/Hora</th>
-                <th style={{ padding: '1rem 1.5rem' }}>Estado</th>
-                <th style={{ padding: '1rem 1.5rem' }}>Acciones</th>
+                <th>Patient Name</th>
+                <th>Service Details</th>
+                <th>Schedule</th>
+                <th>Status</th>
+                <th style={{ textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -112,7 +113,7 @@ export default function Admin() {
                 {filteredAppointments.length === 0 ? (
                   <tr>
                     <td colSpan="5" style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                      No tienes citas registradas aún.
+                      No appointments found.
                     </td>
                   </tr>
                 ) : (
@@ -122,83 +123,67 @@ export default function Admin() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      style={{ borderBottom: '1px solid var(--border)' }}
                     >
                       {editingId === app.id ? (
                         <>
-                          <td style={{ padding: '1rem 1.5rem' }}>
-                            <input type="text" className="form-control" value={editForm.name} onChange={(e) => setEditForm({...editForm, name: e.target.value})} />
-                          </td>
-                          <td style={{ padding: '1rem 1.5rem' }}>
-                            <input type="text" className="form-control" value={editForm.service} onChange={(e) => setEditForm({...editForm, service: e.target.value})} />
-                          </td>
-                          <td style={{ padding: '1rem 1.5rem' }}>
+                          <td><input type="text" className="form-control" value={editForm.name} onChange={(e) => setEditForm({...editForm, name: e.target.value})} /></td>
+                          <td><input type="text" className="form-control" value={editForm.service} onChange={(e) => setEditForm({...editForm, service: e.target.value})} /></td>
+                          <td>
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                               <input type="date" className="form-control" value={editForm.date} onChange={(e) => setEditForm({...editForm, date: e.target.value})} />
                               <input type="time" className="form-control" value={editForm.time} onChange={(e) => setEditForm({...editForm, time: e.target.value})} />
                             </div>
                           </td>
-                          <td style={{ padding: '1rem 1.5rem' }}>
+                          <td>
                             <select className="form-control" value={editForm.status} onChange={(e) => setEditForm({...editForm, status: e.target.value})}>
-                              <option value="pending">Pendiente</option>
-                              <option value="confirmed">Confirmada</option>
-                              <option value="cancelled">Cancelada</option>
+                              <option value="pending">Pending</option>
+                              <option value="confirmed">Confirmed</option>
+                              <option value="cancelled">Cancelled</option>
                             </select>
                           </td>
-                          <td style={{ padding: '1rem 1.5rem' }}>
-                             <div style={{ display: 'flex', gap: '0.5rem' }}>
-                               <button onClick={handleSaveEdit} className="btn" style={{ background: 'var(--accent)', color: 'white', padding: '0.5rem' }}><Check size={18} /></button>
-                               <button onClick={() => setEditingId(null)} className="btn" style={{ background: '#ef4444', color: 'white', padding: '0.5rem' }}><X size={18} /></button>
+                          <td style={{ textAlign: 'right' }}>
+                             <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                               <button onClick={handleSaveEdit} className="btn-icon" style={{ color: 'var(--success)', background: 'rgba(16,185,129,0.1)', boxShadow: 'none' }}><Check size={16} /></button>
+                               <button onClick={() => setEditingId(null)} className="btn-icon" style={{ color: 'var(--danger)', background: 'rgba(239,68,68,0.1)', boxShadow: 'none' }}><X size={16} /></button>
                              </div>
                           </td>
                         </>
                       ) : (
                         <>
-                          <td data-label="Paciente" style={{ padding: '1rem 1.5rem' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(14, 165, 233, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
-                                <User size={20} />
+                          <td>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                              <div className="btn-icon" style={{ background: 'var(--primary)', color: 'white' }}>
+                                {app.name.charAt(0)}
                               </div>
-                              <div style={{ textAlign: 'left' }}>
-                                <div style={{ fontWeight: '600' }}>{app.name}</div>
+                              <div>
+                                <div style={{ fontWeight: '600', color: 'var(--text-main)' }}>{app.name}</div>
                                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{app.email}</div>
                               </div>
                             </div>
                           </td>
-                          <td data-label="Servicio" style={{ padding: '1rem 1.5rem' }}>
-                            <span style={{ padding: '0.25rem 0.75rem', borderRadius: '1rem', background: 'rgba(14, 165, 233, 0.1)', color: 'var(--primary)', fontSize: '0.85rem', fontWeight: '500' }}>
-                              {app.service}
-                            </span>
+                          <td>
+                            <span style={{ color: 'var(--text-main)', fontWeight: 500 }}>{app.service}</span>
                           </td>
-                          <td data-label="Fecha/Hora" style={{ padding: '1rem 1.5rem' }}>
-                            <div style={{ display: 'flex', flexDirection: 'column', fontSize: '0.9rem', alignItems: 'flex-end' }}>
-                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><Calendar size={14} /> {app.date}</span>
-                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-muted)' }}><Clock size={14} /> {app.time}</span>
+                          <td>
+                            <div style={{ display: 'flex', flexDirection: 'column', fontSize: '0.9rem' }}>
+                              <span style={{ fontWeight: 500 }}>{app.date}</span>
+                              <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{app.time}</span>
                             </div>
                           </td>
-                          <td data-label="Estado" style={{ padding: '1rem 1.5rem' }}>
-                            <span style={{ 
-                              padding: '0.25rem 0.75rem', 
-                              borderRadius: '1rem', 
-                              fontSize: '0.75rem', 
-                              fontWeight: '700',
-                              textTransform: 'uppercase',
-                              backgroundColor: app.status === 'confirmed' ? 'rgba(16, 185, 129, 0.1)' : app.status === 'cancelled' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)',
-                              color: app.status === 'confirmed' ? '#10b981' : app.status === 'cancelled' ? '#ef4444' : '#f59e0b'
-                            }}>
-                              {app.status === 'pending' ? 'Pendiente' : app.status === 'confirmed' ? 'Confirmada' : 'Cancelada'}
+                          <td>
+                            <span className={`badge ${app.status === 'confirmed' ? 'badge-success' : app.status === 'cancelled' ? 'badge-danger' : 'badge-warning'}`}>
+                              {app.status === 'pending' ? 'Pending' : app.status === 'confirmed' ? 'Confirmed' : 'Cancelled'}
                             </span>
                           </td>
-                          <td style={{ padding: '1rem 1.5rem' }}>
-                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <td style={{ textAlign: 'right' }}>
+                            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                               {isAdmin && (
-                                <button onClick={() => startEdit(app)} className="btn btn-outline" style={{ padding: '0.5rem', border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
+                                <button onClick={() => startEdit(app)} className="btn-icon" style={{ color: 'var(--text-muted)', background: 'transparent', boxShadow: 'none' }}>
                                   <Edit2 size={16} />
                                 </button>
                               )}
-                              <button onClick={() => deleteAppointment(app.id)} className="btn btn-outline" style={{ padding: '0.5rem', border: '1px solid var(--border)', color: '#ef4444' }}>
+                              <button onClick={() => deleteAppointment(app.id)} className="btn-icon" style={{ color: 'var(--danger)', background: 'transparent', boxShadow: 'none' }}>
                                 <Trash2 size={16} />
-                                <span style={{ fontSize: '0.8rem', marginLeft: '0.25rem' }}>{isAdmin ? '' : 'Cancelar'}</span>
                               </button>
                             </div>
                           </td>

@@ -13,17 +13,19 @@ function App() {
     <AuthProvider>
       <AppointmentProvider>
         <Router>
-          <div className="app-container">
-            <Navbar />
-            <main>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/booking" element={<Booking />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/admin" element={<Admin />} />
-              </Routes>
-            </main>
-            <Footer />
+          <div>
+            <div className="relative z-10 flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-grow">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/booking" element={<Booking />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/admin" element={<Admin />} />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
           </div>
         </Router>
       </AppointmentProvider>
