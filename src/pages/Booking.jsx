@@ -8,6 +8,17 @@ import "react-datepicker/dist/react-datepicker.css";
 
 registerLocale('es', es);
 
+const DateInputCustom = React.forwardRef(({ value, onClick }, ref) => (
+  <div
+    onClick={onClick}
+    ref={ref}
+    style={{ background: 'var(--bg-input)', border: '1.5px solid transparent', borderRadius: '12px', padding: '0.75rem 1rem', fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
+  >
+    <span style={{ color: value ? 'var(--text-main)' : 'var(--text-muted)' }}>{value || 'Seleccionar fecha'}</span>
+    <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>📅</span>
+  </div>
+));
+DateInputCustom.displayName = 'DateInputCustom';
 
 const specialties = [
   'Ortodoncia', 'Odontología General', 'Odontopediatría', 'Implantes', 'Endodoncia', 'Periodoncia', 'Quiropodia'

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   FileText,
@@ -17,6 +17,7 @@ const menuItems = [
 export default function AdminSidebar({ isHovered, setIsHovered }) {
   const { logout, user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <motion.div
@@ -113,7 +114,7 @@ export default function AdminSidebar({ isHovered, setIsHovered }) {
         </div>
 
         <button
-          onClick={logout}
+          onClick={() => { logout(); navigate('/'); }}
           className="sidebar-link"
           style={{
             display: 'flex',
