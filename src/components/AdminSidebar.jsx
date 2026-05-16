@@ -46,11 +46,53 @@ export default function AdminSidebar({ isHovered, setIsHovered }) {
     >
       <style>{`
         @media (max-width: 1024px) {
-          .admin-sidebar { display: none !important; }
+          .admin-sidebar {
+            top: auto !important;
+            bottom: 0 !important;
+            width: 100% !important;
+            height: 70px !important;
+            flex-direction: row !important;
+            border-right: none !important;
+            border-top: 1px solid rgba(0,0,0,0.05) !important;
+            z-index: 5000 !important;
+            padding: 0 !important;
+            display: flex !important;
+            background: rgba(255, 255, 255, 0.95) !important;
+          }
+          .admin-sidebar > div:nth-child(2) { display: none !important; } /* Logo */
+          .admin-sidebar > div:nth-child(3) { 
+            flex-direction: row !important; 
+            padding: 0 1rem !important; 
+            justify-content: space-around !important; 
+            align-items: center !important; 
+            flex: 1 !important;
+            gap: 0 !important;
+          }
+          .admin-sidebar > div:nth-child(4) { display: none !important; } /* User & Logout */
+          
+          .sidebar-link {
+            flex-direction: column !important;
+            gap: 4px !important;
+            padding: 8px !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+          }
+          .sidebar-link svg { width: 22px !important; height: 22px !important; margin: 0 auto; }
+          .sidebar-link span {
+            opacity: 1 !important;
+            transform: none !important;
+            font-size: 0.65rem !important;
+            display: block !important;
+          }
+          .sidebar-link > div { display: none !important; } /* Active pill */
         }
         .sidebar-link:hover {
           background: rgba(0, 0, 0, 0.02) !important;
           transform: translateX(4px);
+        }
+        @media (max-width: 1024px) {
+          .sidebar-link:hover { transform: none !important; }
         }
       `}</style>
       
