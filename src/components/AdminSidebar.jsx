@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   FileText,
+  Users,
   LogOut, 
   UserCircle
 } from 'lucide-react';
@@ -12,6 +13,7 @@ import { useAuth } from '../context/AuthContext';
 const menuItems = [
   { icon: LayoutDashboard, label: 'Panel de Control', path: '/admin' },
   { icon: FileText, label: 'Reportes e Historial', path: '/admin/reports' },
+  { icon: Users, label: 'Gestión de Administradores', path: '/admin/users' },
 ];
 
 export default function AdminSidebar({ isHovered, setIsHovered }) {

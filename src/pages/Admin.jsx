@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppointments } from '../context/AppointmentContext';
+import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import FullCalendar from '@fullcalendar/react';
@@ -35,6 +37,7 @@ const STATUS_COLOR = {
   confirmed: 'var(--primary)',
   pending: '#F59E0B',
   rejected: '#EF4444',
+  completed: '#10B981',
 };
 
 const parseTimeToMinutes = (timeStr) => {
@@ -221,7 +224,10 @@ const calendarStyles = `
 
 export default function Admin() {
   const { appointments, addAppointment, updateAppointment } = useAppointments();
+  const { admins, addAdmin, removeAdmin, user } = useAuth();
   const viewportRef = useRef(null);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const [viewMode, setViewMode] = useState('timeline');
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -232,6 +238,21 @@ export default function Admin() {
   const [editDuration, setEditDuration] = useState(30);
   const [editFields, setEditFields] = useState({ email: '', phone: '', countryCode: '+506', date: '', time: '', service: SPECIALTIES[0], description: '' });
   const [confirm, setConfirm] = useState(null); // { type: 'reject' | 'delete' }
+  const [newAdminForm, setNewAdminForm] = useState({ name: '', username: '', password: '' });
+
+  // Report Filters
+  const [reportDateFilter, setReportDateFilter] = useState('all');
+  const [reportStatusFilter, setReportStatusFilter] = useState('all');
+
+  useEffect(() => {
+    if (location.pathname === '/admin/reports') {
+      setViewMode('reports');
+    } else if (location.pathname === '/admin/users') {
+      setViewMode('users');
+    } else if (location.pathname === '/admin' && (viewMode === 'reports' || viewMode === 'users')) {
+      setViewMode('timeline');
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 30000);
@@ -263,11 +284,41 @@ export default function Admin() {
     confirmed: appointments.filter(a => a.status === 'confirmed').length,
     pending: appointments.filter(a => a.status === 'pending').length,
     rejected: appointments.filter(a => a.status === 'rejected').length,
+    completed: appointments.filter(a => a.status === 'completed').length,
   }), [appointments]);
 
   const todayStr = now.toISOString().split('T')[0];
   const activeDayStr = selectedDate || todayStr;
   const dayAppointments = useMemo(() => appointments.filter(a => a.date === activeDayStr), [appointments, activeDayStr]);
+
+  const filteredReports = useMemo(() => {
+    let result = [...appointments];
+    
+    if (reportStatusFilter !== 'all') {
+      result = result.filter(a => a.status === reportStatusFilter);
+    }
+    
+    if (reportDateFilter !== 'all') {
+      if (reportDateFilter === 'day') {
+        result = result.filter(a => a.date === todayStr);
+      } else if (reportDateFilter === 'week') {
+        const d = new Date(now);
+        d.setDate(d.getDate() - d.getDay()); // Sunday
+        const weekStart = d.toISOString().split('T')[0];
+        d.setDate(d.getDate() + 6); // Saturday
+        const weekEnd = d.toISOString().split('T')[0];
+        result = result.filter(a => a.date >= weekStart && a.date <= weekEnd);
+      } else if (reportDateFilter === 'month') {
+        const monthPrefix = todayStr.substring(0, 7);
+        result = result.filter(a => a.date.startsWith(monthPrefix));
+      }
+    }
+    
+    return result.sort((a, b) => {
+      if (a.date !== b.date) return b.date.localeCompare(a.date);
+      return parseTimeToMinutes(b.time) - parseTimeToMinutes(a.time);
+    });
+  }, [appointments, reportDateFilter, reportStatusFilter, todayStr, now]);
 
   const openEvent = (app) => {
     setSelectedEvent(app);
@@ -300,7 +351,7 @@ export default function Admin() {
     fontSize: '0.65rem',
     fontWeight: 800,
     textTransform: 'uppercase',
-    background: status === 'confirmed' ? 'rgba(22,163,74,0.1)' : status === 'rejected' ? 'rgba(239,68,68,0.1)' : 'rgba(245,158,11,0.1)',
+    background: status === 'confirmed' ? 'rgba(22,163,74,0.1)' : status === 'rejected' ? 'rgba(239,68,68,0.1)' : status === 'completed' ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)',
     color: STATUS_COLOR[status] || '#888',
   });
 
@@ -340,9 +391,11 @@ export default function Admin() {
 
         <div style={{ flex: '0 0 auto', display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
           <div style={{ display: 'flex', background: 'var(--bg-input)', padding: '4px', borderRadius: '12px', gap: '2px' }}>
-            <button onClick={() => setViewMode('day')} className={`view-btn ${viewMode === 'day' ? 'active' : ''}`}>DÍA</button>
-            <button onClick={() => setViewMode('timeline')} className={`view-btn ${viewMode === 'timeline' ? 'active' : ''}`}>SEMANA</button>
-            <button onClick={() => setViewMode('month')} className={`view-btn ${viewMode === 'month' ? 'active' : ''}`}>MES</button>
+            <button onClick={() => { navigate('/admin'); setViewMode('day'); }} className={`view-btn ${viewMode === 'day' ? 'active' : ''}`}>DÍA</button>
+            <button onClick={() => { navigate('/admin'); setViewMode('timeline'); }} className={`view-btn ${viewMode === 'timeline' ? 'active' : ''}`}>SEMANA</button>
+            <button onClick={() => { navigate('/admin'); setViewMode('month'); }} className={`view-btn ${viewMode === 'month' ? 'active' : ''}`}>MES</button>
+            <button onClick={() => { navigate('/admin/reports'); setViewMode('reports'); }} className={`view-btn ${viewMode === 'reports' ? 'active' : ''}`}>REPORTES</button>
+            <button onClick={() => { navigate('/admin/users'); setViewMode('users'); }} className={`view-btn ${viewMode === 'users' ? 'active' : ''}`}>USUARIOS</button>
           </div>
           <button className="btn btn-primary" onClick={() => { setSelectedEvent(null); setConfirm(null); setIsRightSidebarOpen(true); }} style={{ padding: '0.8rem 1.75rem', fontSize: '0.85rem' }}>NUEVA CITA</button>
         </div>
@@ -353,7 +406,7 @@ export default function Admin() {
 
           {/* Color legend */}
           <div className="status-legend">
-            {[['confirmed', 'Confirmada'], ['pending', 'Pendiente'], ['rejected', 'Rechazada']].map(([s, label]) => (
+            {[['confirmed', 'Confirmada'], ['pending', 'Pendiente'], ['rejected', 'Rechazada'], ['completed', 'Realizada']].map(([s, label]) => (
               <div key={s} className="status-legend-item">
                 <span className="status-dot" style={{ background: STATUS_COLOR[s] }} />
                 {label}
@@ -402,7 +455,7 @@ export default function Admin() {
                             <td><div style={{ fontWeight: 800 }}>{app.name}</div></td>
                             <td style={{ fontWeight: 600 }}>{app.service}</td>
                             <td>{app.time}{app.duration && app.duration !== 30 ? ` · ${app.duration}min` : ''}</td>
-                            <td><span style={badgeStyle(app.status)}>{app.status === 'confirmed' ? 'Confirmada' : app.status === 'rejected' ? 'Rechazada' : 'Pendiente'}</span></td>
+                            <td><span style={badgeStyle(app.status)}>{app.status === 'confirmed' ? 'Confirmada' : app.status === 'rejected' ? 'Rechazada' : app.status === 'completed' ? 'Realizada' : 'Pendiente'}</span></td>
                             <td style={{ textAlign: 'right' }}>
                               <button onClick={() => openEvent(app)} style={{ background: 'var(--primary)', border: 'none', borderRadius: '8px', cursor: 'pointer', color: 'white', fontWeight: 800, fontSize: '0.68rem', padding: '0.4rem 0.85rem', letterSpacing: '0.04em' }}>Gestionar</button>
                             </td>
@@ -468,6 +521,179 @@ export default function Admin() {
                   })}
                 </div>
 
+              ) : viewMode === 'reports' ? (
+                <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                    <h3 style={{ fontWeight: 900, margin: 0, fontSize: '1.5rem' }}>Reporte de Citas</h3>
+                    <button 
+                      className="btn btn-primary"
+                      onClick={() => {
+                        const headers = 'Fecha,Hora,Paciente,Teléfono,Email,Servicio,Estado\r\n';
+                        const rows = filteredReports.map(a => `${a.date || ''},${a.time || ''},"${a.name || ''}",${a.phone || ''},${a.email || ''},"${a.service || ''}",${a.status || ''}`).join('\r\n');
+                        const blob = new Blob(["\uFEFF" + headers + rows], { type: 'text/csv;charset=utf-8;' });
+                        const link = document.createElement("a");
+                        link.href = URL.createObjectURL(blob);
+                        link.download = "reporte_citas.csv";
+                        link.style.visibility = 'hidden';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      }}
+                    >
+                      Descargar Reporte CSV
+                    </button>
+                  </div>
+                  
+                  <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem', background: 'white', padding: '6px', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
+                      <select className="form-control" style={{ width: '200px', border: 'none', background: 'transparent', fontWeight: 700 }} value={reportDateFilter} onChange={(e) => setReportDateFilter(e.target.value)}>
+                        <option value="all">Todas las Fechas</option>
+                        <option value="day">Día de Hoy</option>
+                        <option value="week">Esta Semana</option>
+                        <option value="month">Este Mes</option>
+                      </select>
+                      
+                      <div style={{ width: '1px', background: 'rgba(0,0,0,0.06)' }}></div>
+
+                      <select className="form-control" style={{ width: '200px', border: 'none', background: 'transparent', fontWeight: 700 }} value={reportStatusFilter} onChange={(e) => setReportStatusFilter(e.target.value)}>
+                        <option value="all">Todos los Estados</option>
+                        <option value="confirmed">Confirmadas</option>
+                        <option value="pending">Pendientes</option>
+                        <option value="rejected">Rechazadas</option>
+                        <option value="completed">Realizadas</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+                    <div style={{ background: 'white', padding: '1.25rem', borderRadius: '14px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.04)' }}>
+                      <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total en Filtro</div>
+                      <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1, marginTop: '0.5rem' }}>{filteredReports.length}</div>
+                    </div>
+                    <div style={{ background: 'white', padding: '1.25rem', borderRadius: '14px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.04)' }}>
+                      <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Confirmadas</div>
+                      <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--primary)', lineHeight: 1, marginTop: '0.5rem' }}>{filteredReports.filter(a => a.status === 'confirmed').length}</div>
+                    </div>
+                    <div style={{ background: 'white', padding: '1.25rem', borderRadius: '14px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.04)' }}>
+                      <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Realizadas</div>
+                      <div style={{ fontSize: '2rem', fontWeight: 900, color: '#10B981', lineHeight: 1, marginTop: '0.5rem' }}>{filteredReports.filter(a => a.status === 'completed').length}</div>
+                    </div>
+                    <div style={{ background: 'white', padding: '1.25rem', borderRadius: '14px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.04)' }}>
+                      <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Rechazadas</div>
+                      <div style={{ fontSize: '2rem', fontWeight: 900, color: '#EF4444', lineHeight: 1, marginTop: '0.5rem' }}>{filteredReports.filter(a => a.status === 'rejected').length}</div>
+                    </div>
+                  </div>
+
+                  <div style={{ overflowY: 'auto', flex: 1, border: '1px solid rgba(0,0,0,0.05)', borderRadius: '14px', background: 'white', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
+                    <table className="day-table">
+                      <thead style={{ position: 'sticky', top: 0, background: 'var(--bg-card)', zIndex: 10 }}>
+                        <tr>
+                          <th>Fecha / Hora</th>
+                          <th>Paciente</th>
+                          <th>Contacto</th>
+                          <th>Servicio</th>
+                          <th>Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredReports.length === 0 ? (
+                           <tr><td colSpan="5" style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>No se encontraron resultados para los filtros seleccionados.</td></tr>
+                        ) : (
+                          filteredReports.map(app => (
+                            <tr key={app.id}>
+                              <td style={{ fontWeight: 800 }}>{app.date} <br/><span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 600 }}>{app.time}</span></td>
+                              <td style={{ fontWeight: 800 }}>{app.name}</td>
+                              <td style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>{app.phone}<br/>{app.email}</td>
+                              <td style={{ fontWeight: 600 }}>{app.service}</td>
+                              <td>
+                                <span style={{
+                                  display: 'inline-block',
+                                  padding: '3px 10px',
+                                  borderRadius: '20px',
+                                  fontSize: '0.65rem',
+                                  fontWeight: 800,
+                                  textTransform: 'uppercase',
+                                  background: app.status === 'confirmed' ? 'rgba(22,163,74,0.1)' : app.status === 'rejected' ? 'rgba(239,68,68,0.1)' : app.status === 'completed' ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)',
+                                  color: STATUS_COLOR[app.status] || '#888'
+                                }}>
+                                  {app.status === 'confirmed' ? 'Confirmada' : app.status === 'rejected' ? 'Rechazada' : app.status === 'completed' ? 'Realizada' : 'Pendiente'}
+                                </span>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : viewMode === 'users' ? (
+                <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+                  <div style={{ marginBottom: '2rem' }}>
+                    <h3 style={{ fontWeight: 900, margin: 0, fontSize: '1.5rem', marginBottom: '0.5rem' }}>Gestión de Administradores</h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Crea accesos para el personal de la clínica. Ellos podrán iniciar sesión con el usuario y contraseña que definas aquí.</p>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '2rem', height: '100%', minHeight: 0 }}>
+                    {/* Form to create admin */}
+                    <div style={{ background: 'white', padding: '1.5rem', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      <h4 style={{ fontWeight: 800, fontSize: '1.1rem', marginBottom: '0.5rem' }}>Nuevo Administrador</h4>
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        addAdmin(newAdminForm);
+                        setNewAdminForm({ name: '', username: '', password: '' });
+                        alert('Administrador creado exitosamente.');
+                      }} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.3rem', textTransform: 'uppercase' }}>Nombre Completo</label>
+                          <input type="text" required className="form-control" placeholder="Ej. Dra. María Rojas" value={newAdminForm.name} onChange={e => setNewAdminForm({...newAdminForm, name: e.target.value})} />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.3rem', textTransform: 'uppercase' }}>Usuario</label>
+                          <input type="text" required className="form-control" placeholder="Ej. mrojas" value={newAdminForm.username} onChange={e => setNewAdminForm({...newAdminForm, username: e.target.value})} />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.3rem', textTransform: 'uppercase' }}>Contraseña Temporal</label>
+                          <input type="text" required className="form-control" placeholder="Ej. dent123" value={newAdminForm.password} onChange={e => setNewAdminForm({...newAdminForm, password: e.target.value})} />
+                        </div>
+                        <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem', padding: '0.85rem' }}>CREAR ACCESO</button>
+                      </form>
+                    </div>
+
+                    {/* List of admins */}
+                    <div style={{ overflowY: 'auto', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '16px', background: 'white', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
+                      <table className="day-table">
+                        <thead style={{ position: 'sticky', top: 0, background: 'var(--bg-card)', zIndex: 10 }}>
+                          <tr>
+                            <th>Nombre Completo</th>
+                            <th>Usuario</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {admins.map(a => (
+                            <tr key={a.id}>
+                              <td style={{ fontWeight: 800 }}>{a.name}</td>
+                              <td style={{ fontWeight: 600, color: 'var(--primary)' }}>@{a.username}</td>
+                              <td><span style={{ background: 'rgba(22,163,74,0.1)', color: '#16A34A', padding: '3px 10px', borderRadius: '20px', fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase' }}>Administrador</span></td>
+                              <td>
+                                {a.username !== user?.username && (
+                                  <button onClick={() => {
+                                    if(window.confirm(`¿Seguro que deseas eliminar el acceso de ${a.name}?`)) {
+                                      removeAdmin(a.id);
+                                    }
+                                  }} style={{ background: 'rgba(239,68,68,0.1)', color: '#EF4444', border: 'none', padding: '5px 12px', borderRadius: '8px', fontSize: '0.7rem', fontWeight: 800, cursor: 'pointer' }}>
+                                    Revocar Acceso
+                                  </button>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
               ) : (
                 <div style={{ padding: '1rem', height: '100%' }}>
                   <FullCalendar
@@ -519,7 +745,7 @@ export default function Admin() {
                         <div style={{ fontSize: '1.05rem', fontWeight: 900 }}>{selectedEvent.name}</div>
                       </div>
                       <span style={badgeStyle(selectedEvent.status)}>
-                        {selectedEvent.status === 'confirmed' ? 'Confirmada' : selectedEvent.status === 'rejected' ? 'Rechazada' : 'Pendiente'}
+                        {selectedEvent.status === 'confirmed' ? 'Confirmada' : selectedEvent.status === 'rejected' ? 'Rechazada' : selectedEvent.status === 'completed' ? 'Realizada' : 'Pendiente'}
                       </span>
                     </div>
 
@@ -623,19 +849,30 @@ export default function Admin() {
                           </div>
                         </div>
                       ) : (
-                        <div style={{ display: 'flex', gap: '0.75rem' }}>
-                          <button
-                            className="btn btn-primary"
-                            style={{ flex: 1, opacity: isValid ? 1 : 0.45, cursor: isValid ? 'pointer' : 'not-allowed' }}
-                            onClick={isValid ? handleApprove : undefined}
-                            title={!isValid ? 'Actualiza la fecha y hora antes de continuar' : ''}
-                          >
-                            {primaryLabel}
-                          </button>
-                          {status !== 'rejected' && (
+                        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                          {status !== 'completed' && (
+                            <button
+                              className="btn btn-primary"
+                              style={{ flex: 1, minWidth: '120px', opacity: isValid ? 1 : 0.45, cursor: isValid ? 'pointer' : 'not-allowed' }}
+                              onClick={isValid ? handleApprove : undefined}
+                              title={!isValid ? 'Actualiza la fecha y hora antes de continuar' : ''}
+                            >
+                              {primaryLabel}
+                            </button>
+                          )}
+                          {status === 'confirmed' && (
                             <button
                               className="btn"
-                              style={{ flex: 1, color: '#F59E0B', background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.2)' }}
+                              style={{ flex: 1, minWidth: '120px', color: 'white', background: '#10B981', border: 'none' }}
+                              onClick={() => { updateAppointment(selectedEvent.id, { status: 'completed' }); closeSidebar(); }}
+                            >
+                              REALIZADA
+                            </button>
+                          )}
+                          {status !== 'rejected' && status !== 'completed' && (
+                            <button
+                              className="btn"
+                              style={{ flex: 1, minWidth: '120px', color: '#F59E0B', background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.2)' }}
                               onClick={() => setConfirm({ type: 'reject' })}
                             >
                               RECHAZAR

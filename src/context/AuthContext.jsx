@@ -5,6 +5,7 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [admins, setAdmins] = useState([]);
 
   useEffect(() => {
     try {
@@ -12,24 +13,44 @@ export function AuthProvider({ children }) {
       if (savedUser) {
         setUser(JSON.parse(savedUser));
       }
+      
+      const savedAdmins = localStorage.getItem('dental_admins');
+      if (savedAdmins) {
+        setAdmins(JSON.parse(savedAdmins));
+      } else {
+        // Default admin
+        const defaultAdmin = { id: Date.now().toString(), username: 'admin', password: '123', role: 'admin', name: 'Administrador Principal' };
+        setAdmins([defaultAdmin]);
+        localStorage.setItem('dental_admins', JSON.stringify([defaultAdmin]));
+      }
     } catch (e) {
-      console.error('Error loading user', e);
+      console.error('Error loading auth data', e);
       localStorage.removeItem('dental_user');
     }
     setLoading(false);
   }, []);
 
   const login = (username, password) => {
-    // Fake login: allow any credentials
-    const userData = { 
-      email: `${username}@clinica.com`, 
-      username: username || 'admin', 
-      role: 'admin', 
-      name: username || 'Administrador' 
-    };
-    setUser(userData);
-    localStorage.setItem('dental_user', JSON.stringify(userData));
-    return true;
+    // Admin login
+    const adminUser = admins.find(a => a.username === username && a.password === password);
+    if (adminUser) {
+      const userData = { email: `${username}@clinica.com`, username, role: 'admin', name: adminUser.name };
+      setUser(userData);
+      localStorage.setItem('dental_user', JSON.stringify(userData));
+      return true;
+    }
+    
+    // Fallback patient login (not used much)
+    const users = JSON.parse(localStorage.getItem('dental_registered_users') || '[]');
+    const patient = users.find(u => u.email === username && u.password === password);
+    if (patient) {
+      const userData = { name: patient.name, email: patient.email, role: 'patient' };
+      setUser(userData);
+      localStorage.setItem('dental_user', JSON.stringify(userData));
+      return true;
+    }
+    
+    return false;
   };
 
   const register = (name, email, password) => {
@@ -52,8 +73,20 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('dental_user');
   };
 
+  const addAdmin = (newAdmin) => {
+    const updatedAdmins = [...admins, { ...newAdmin, id: Date.now().toString(), role: 'admin' }];
+    setAdmins(updatedAdmins);
+    localStorage.setItem('dental_admins', JSON.stringify(updatedAdmins));
+  };
+
+  const removeAdmin = (id) => {
+    const updatedAdmins = admins.filter(a => a.id !== id);
+    setAdmins(updatedAdmins);
+    localStorage.setItem('dental_admins', JSON.stringify(updatedAdmins));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, admins, login, register, logout, loading, addAdmin, removeAdmin }}>
       {!loading && children}
     </AuthContext.Provider>
   );
