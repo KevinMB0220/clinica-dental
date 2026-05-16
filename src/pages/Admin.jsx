@@ -136,7 +136,21 @@ const calendarStyles = `
   .timeline-day-row:last-child .timeline-day-label { border-bottom: none; }
 
   .now-line { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--primary); z-index: 60; pointer-events: none; }
-  .now-line::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
+  .now-line-label {
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 900;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+    box-shadow: 0 2px 8px rgba(22,163,74,0.35);
+  }
 
   .appointment-pill { position: absolute; height: ${PILL_H}px; border-radius: 22px; padding: 0 1rem; display: flex; align-items: center; font-size: 0.72rem; font-weight: 800; color: white; box-shadow: 0 3px 10px rgba(0,0,0,0.12); z-index: 30; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: filter 0.15s; }
   .appointment-pill:hover { filter: brightness(1.1); }
@@ -259,8 +273,13 @@ export default function Admin() {
 
       <header className="admin-header-premium">
         <div style={{ flex: '0 0 auto' }}>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.04em', margin: 0 }}>Panel de Control</h1>
-          <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Dental Turrialba</div>
+          <div style={{ fontSize: '0.55rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '3px' }}>Dental Turrialba · Panel de Control</div>
+          <div style={{ fontSize: '2rem', fontWeight: 900, letterSpacing: '-0.05em', lineHeight: 1, color: 'var(--text-main)' }}>
+            {now.toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit', hour12: false })}
+          </div>
+          <div style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-muted)', marginTop: '2px', textTransform: 'capitalize' }}>
+            {now.toLocaleDateString('es-CR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+          </div>
         </div>
 
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>
@@ -345,7 +364,13 @@ export default function Admin() {
 
               ) : viewMode === 'timeline' ? (
                 <div className="timeline-grid">
-                  {nowLineX !== null && <div className="now-line" style={{ left: nowLineX }} />}
+                  {nowLineX !== null && (
+                    <div className="now-line" style={{ left: nowLineX }}>
+                      <div className="now-line-label">
+                        {now.toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                      </div>
+                    </div>
+                  )}
                   <div className="timeline-header-cell" style={{ left: 0, zIndex: 100 }}>DÍA / HORA</div>
                   {HOURS.map(h => (
                     <React.Fragment key={h}>
