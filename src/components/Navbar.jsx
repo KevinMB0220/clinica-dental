@@ -1,21 +1,14 @@
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LogOut, CalendarCheck } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 
-function ToothLogo() {
+function ProfessionalToothIcon() {
   return (
-    <svg
-      width="36"
-      height="36"
-      viewBox="0 0 40 40"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="logo-icon"
-    >
-      <path
-        d="M9 11.5C9 7.8 11.8 5 15 6C17 6.7 18.5 7.5 20 7.5C21.5 7.5 23 6.7 25 6C28.2 5 31 7.8 31 11.5C31 16.5 28.8 21.5 27.5 26C26.8 28.5 26.2 31 25 33.5C24.3 35 23.2 36 21.5 36C19.8 36 19.2 34.2 18.7 32.5C18.2 30.8 20 29 20 29C20 29 21.8 30.8 21.3 32.5C20.8 34.2 20.2 36 18.5 36C16.8 36 15.7 35 15 33.5C13.8 31 13.2 28.5 12.5 26C11.2 21.5 9 16.5 9 11.5Z"
-        fill="currentColor"
-      />
+    <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 2C16 2 12 3 10 5C8 7 7 10 7 13C7 18 9 22 11 26C12 28 13 31 15 34C16 36 17.5 38 20 38C22.5 38 24 36 25 34C27 31 28 28 29 26C31 22 33 18 33 13C33 10 32 7 30 5C28 3 24 2 20 2ZM20 30C18 30 17 28 16 26C15 24 14 21 14 18C14 15 15 13 17 11C19 9 21 9 23 11C25 13 26 15 26 18C26 21 25 24 24 26C23 28 22 30 20 30Z" 
+            fill="var(--primary)" />
+      <path d="M20 10C18 10 16 11.5 16 14C16 16.5 17.5 18 20 18C22.5 18 24 16.5 24 14C24 11.5 22 10 20 10Z" fill="white" fillOpacity="0.8" />
     </svg>
   );
 }
@@ -23,61 +16,87 @@ function ToothLogo() {
 export default function Navbar() {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const [activeSection, setActiveSection] = useState('home');
 
-  const isActive = (path) =>
-    location.pathname === path ? 'nav-link-item nav-link-active' : 'nav-link-item';
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['home', 'clinica', 'servicios', 'equipo'];
+      const scrollPosition = window.scrollY + 150;
+
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const offsetTop = element.offsetTop;
+          const height = element.offsetHeight;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + height) {
+            setActiveSection(section);
+          }
+        }
+      }
+      if (window.scrollY < 100) setActiveSection('home');
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (location.pathname === '/') {
+      if (!location.hash) setActiveSection('home');
+    }
+  }, [location]);
+
+  const navItems = [
+    { id: 'home', label: 'Inicio', path: '/' },
+    { id: 'clinica', label: 'Clínica', path: '/#clinica' },
+    { id: 'servicios', label: 'Servicios', path: '/#servicios' },
+    { id: 'equipo', label: 'Equipo', path: '/#equipo' },
+  ];
 
   return (
     <nav>
       <div className="container flex-between" style={{ width: '100%' }}>
-        {/* ── Logo ── */}
-        <Link to="/" className="logo">
-          <ToothLogo />
-          <span className="logo-main">Turrialba Dental</span>
+        <Link to="/" className="logo" style={{ gap: '0.75rem' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+          <ProfessionalToothIcon />
+          <span className="logo-main" style={{ fontSize: '1.25rem', fontWeight: 800 }}>Turrialba Dental <span style={{ fontWeight: 500, color: 'var(--text-muted)' }}>Care</span></span>
         </Link>
 
-        {/* ── Nav links ── */}
-        <ul className="nav-links" style={{ background: 'var(--bg-card)', padding: '0.5rem', borderRadius: 'var(--radius-pill)', boxShadow: 'var(--shadow-card)' }}>
-          <li>
-            <Link to="/" className={isActive('/')}>
-              Home
-            </Link>
-          </li>
-          <li>
-            <a href="/#servicios" className="nav-link-item">
-              Services
-            </a>
-          </li>
-          {user && (
-            <li>
-              <Link to="/admin" className={isActive('/admin')}>
-                {user.role === 'admin' ? 'Analytics' : 'Appointments'}
-              </Link>
+        <ul className="nav-links">
+          {navItems.map((item) => (
+            <li key={item.id} style={{ position: 'relative' }}>
+              <a 
+                href={item.path} 
+                className={`nav-link-item ${activeSection === item.id ? 'nav-link-active' : ''}`}
+                onClick={(e) => {
+                  if (item.id === 'home') {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setActiveSection('home');
+                  }
+                }}
+              >
+                {item.label}
+                {activeSection === item.id && (
+                  <motion.div 
+                    layoutId="active-pill"
+                    className="nav-pill-bg"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
+              </a>
             </li>
-          )}
+          ))}
         </ul>
 
-        {/* ── Right actions ── */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: 'var(--bg-card)', padding: '0.4rem 1rem 0.4rem 0.4rem', borderRadius: 'var(--radius-pill)', boxShadow: 'var(--shadow-card)' }}>
-               <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem' }}>
-                 {user.name.charAt(0)}
-               </div>
-               <span style={{ fontWeight: '600', fontSize: '0.85rem' }}>{user.name.split(' ')[0]}</span>
-               <button onClick={logout} className="btn-icon" style={{ background: 'transparent', boxShadow: 'none', width: 'auto', height: 'auto', color: 'var(--text-muted)' }}>
-                 <LogOut size={16} />
-               </button>
+          {user && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', paddingRight: '1rem' }}>
+               <button onClick={logout} style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>Salir</button>
             </div>
-          ) : (
-            <Link to="/login" className="nav-link-item">
-              Login
-            </Link>
           )}
-
-          <Link to="/booking" className="btn btn-primary" style={{ padding: '0.75rem 1.5rem' }}>
-            Schedule <CalendarCheck size={16} style={{ marginLeft: '4px' }}/>
-          </Link>
+          <a href="https://wa.me/50625562673" target="_blank" rel="noreferrer" className="btn btn-primary" style={{ padding: '0.7rem 1.4rem', fontSize: '0.85rem' }}>
+            Agendar cita
+          </a>
         </div>
       </div>
     </nav>
