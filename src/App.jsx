@@ -6,6 +6,8 @@ import Home from './pages/Home';
 import Booking from './pages/Booking';
 import Login from './pages/Login';
 import Admin from './pages/Admin';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
 import AdminSidebar from './components/AdminSidebar';
 import MobileHeader from './components/MobileHeader';
 import { AppointmentProvider } from './context/AppointmentContext';
@@ -43,6 +45,8 @@ function AppContent() {
             <Route path="/booking" element={<Booking />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin/*" element={<Admin />} />
+            <Route path="/privacidad" element={<Privacy />} />
+            <Route path="/terminos" element={<Terms />} />
           </Routes>
         </main>
 

@@ -51,9 +51,13 @@ export default function Footer() {
 
           </div>
 
-          <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+          <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-muted)', fontSize: '0.9rem', flexWrap: 'wrap', gap: '1.5rem' }}>
             <div>© {new Date().getFullYear()} Turrialba Dental Care. Todos los derechos reservados.</div>
-            <Link to="/login" style={{ color: 'var(--text-muted)', textDecoration: 'none', opacity: 0.6, fontSize: '0.8rem' }}>Acceso Administrativo</Link>
+            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+              <Link to="/privacidad" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Privacidad</Link>
+              <Link to="/terminos" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Términos y Condiciones</Link>
+              <Link to="/login" style={{ color: 'var(--text-muted)', textDecoration: 'none', opacity: 0.6 }}>Acceso Administrativo</Link>
+            </div>
           </div>
         </div>
       </footer>

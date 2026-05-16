@@ -21,9 +21,19 @@ export default function MobileFooter() {
         © {new Date().getFullYear()} Turrialba Dental Care.
       </div>
       
-      <Link to="/login" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textDecoration: 'none', marginTop: '1.5rem', display: 'block', opacity: 0.6 }}>
-        Acceso Administrativo
-      </Link>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginTop: '1.5rem' }}>
+        <Link to="/privacidad" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textDecoration: 'none' }}>
+          Privacidad
+        </Link>
+        <span style={{ color: 'var(--text-muted)', opacity: 0.3 }}>|</span>
+        <Link to="/terminos" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textDecoration: 'none' }}>
+          Términos
+        </Link>
+        <span style={{ color: 'var(--text-muted)', opacity: 0.3 }}>|</span>
+        <Link to="/login" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textDecoration: 'none', opacity: 0.6 }}>
+          Admin
+        </Link>
+      </div>
     </footer>
   );
 }
