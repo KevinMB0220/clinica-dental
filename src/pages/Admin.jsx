@@ -135,19 +135,20 @@ const calendarStyles = `
 
   .admin-header-premium {
     background: white;
-    padding: 0 3rem;
+    padding: 0 1.5rem;
     border-bottom: 1px solid rgba(0,0,0,0.06);
     display: flex;
     align-items: center;
     justify-content: space-between;
     z-index: 1000;
-    height: 90px;
+    height: 80px;
     flex-shrink: 0;
+    gap: 1rem;
   }
 
-  .stat-card-top { background: #F8F9FA; padding: 0.6rem 1.25rem; border-radius: 14px; display: flex; flex-direction: column; min-width: 120px; border: 1px solid rgba(0,0,0,0.03); }
-  .stat-card-top .label { font-size: 0.55rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-  .stat-card-top .value { font-size: 1.25rem; font-weight: 900; color: var(--text-main); line-height: 1.2; }
+  .stat-card-top { background: #F8F9FA; padding: 0.4rem 0.8rem; border-radius: 12px; display: flex; flex-direction: column; min-width: 90px; border: 1px solid rgba(0,0,0,0.03); }
+  .stat-card-top .label { font-size: 0.5rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-card-top .value { font-size: 1.1rem; font-weight: 900; color: var(--text-main); line-height: 1.2; }
 
   .admin-content-body { flex: 1; display: flex; overflow: hidden; position: relative; width: 100%; }
 
@@ -161,7 +162,7 @@ const calendarStyles = `
 
   .timeline-viewport { overflow-x: auto; overflow-y: auto; position: relative; }
 
-  .view-btn { border: none; background: transparent; font-size: 0.7rem; font-weight: 700; padding: 0.5rem 1.25rem; border-radius: 9px; cursor: pointer; color: var(--text-muted); transition: all 0.15s ease; letter-spacing: 0.04em; }
+  .view-btn { border: none; background: transparent; font-size: 0.65rem; font-weight: 700; padding: 0.4rem 0.8rem; border-radius: 9px; cursor: pointer; color: var(--text-muted); transition: all 0.15s ease; letter-spacing: 0.04em; }
   .view-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-weight: 900; }
 
   .timeline-grid { display: grid; grid-template-columns: 140px repeat(${HOURS.length * 2}, ${SLOT_WIDTH}px); position: relative; width: max-content; }
@@ -220,6 +221,115 @@ const calendarStyles = `
   .fc-today-button { opacity: 1 !important; }
   .fc-daygrid-day.fc-day-today { background: rgba(22,163,74,0.05) !important; }
   .fc-event { border-radius: 6px !important; border: none !important; font-size: 0.7rem !important; font-weight: 700 !important; padding: 2px 6px !important; cursor: pointer; }
+
+  /* Admins / Users grid */
+  .admin-users-grid { display: grid; grid-template-columns: 300px 1fr; gap: 2rem; height: 100%; min-height: 0; }
+
+  /* Responsive Mobile Styles */
+  @media (max-width: 1024px) {
+    .admin-page-container {
+      padding-bottom: 70px !important;
+    }
+    .admin-header-premium {
+      padding: 1.5rem 1rem;
+      height: auto;
+      flex-direction: column;
+      gap: 1.25rem;
+      align-items: flex-start;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .admin-header-premium > div {
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: flex-start !important;
+    }
+    .stat-card-top {
+      flex: 1;
+      min-width: 0;
+      background: rgba(248, 249, 250, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    .right-management-sidebar {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      width: 100% !important;
+      max-width: 100%;
+      z-index: 2000;
+      box-shadow: -10px 0 40px rgba(0,0,0,0.05);
+    }
+    .view-btn {
+      padding: 0.6rem;
+      font-size: 0.65rem;
+    }
+    .view-btn-container {
+      flex-wrap: wrap;
+    }
+    .admin-users-grid {
+      grid-template-columns: 1fr;
+      height: auto;
+      overflow: visible;
+    }
+    .calendar-main-area {
+      padding: 1rem;
+    }
+    .admin-reports-header {
+      flex-direction: column;
+      align-items: flex-start !important;
+      gap: 1rem;
+    }
+    .admin-reports-stats {
+      grid-template-columns: 1fr 1fr !important;
+    }
+    .admin-content-pad {
+      padding: 1rem !important;
+      padding-bottom: 2rem !important;
+      overflow: visible !important;
+      height: auto !important;
+    }
+    /* Mobile Stacked Tables */
+    .day-table thead { display: none; }
+    .day-table, .day-table tbody, .day-table tr, .day-table td { display: block; width: 100%; box-sizing: border-box; }
+    .day-table tr { margin-bottom: 1rem; border: 1px solid rgba(0,0,0,0.05); border-radius: 12px; padding: 0.5rem; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+    .day-table td { text-align: right; padding: 0.5rem; padding-left: 40%; border-bottom: 1px solid rgba(0,0,0,0.03); position: relative; min-height: 40px; display: flex; justify-content: flex-end; align-items: center; }
+    .day-table td:last-child { border-bottom: none; }
+    .day-table td::before { content: attr(data-label); position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); }
+    
+    .report-filters-wrapper {
+      flex-direction: column !important;
+      width: 100% !important;
+    }
+    .report-filters-wrapper > select {
+      width: 100% !important;
+    }
+    .report-filters-wrapper > div {
+      display: none !important;
+    }
+    
+    /* Ensure body doesn't overflow horizontally */
+    .admin-page-container {
+      overflow-x: hidden !important;
+      height: auto !important;
+      min-height: 100vh;
+      overflow-y: visible !important;
+      padding-bottom: 90px !important;
+    }
+    .admin-content-body {
+      overflow: visible !important;
+    }
+    .timeline-wrapper {
+      overflow: visible !important;
+      min-height: 500px;
+    }
+    .timeline-viewport {
+      overflow-y: visible !important;
+    }
+  }
 `;
 
 export default function Admin() {
@@ -370,7 +480,7 @@ export default function Admin() {
           </div>
         </div>
 
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: '0.75rem', overflow: 'hidden' }}>
           <div className="stat-card-top">
             <span className="label">Total</span>
             <span className="value">{stats.total}</span>
@@ -389,15 +499,15 @@ export default function Admin() {
           </div>
         </div>
 
-        <div style={{ flex: '0 0 auto', display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-          <div style={{ display: 'flex', background: 'var(--bg-input)', padding: '4px', borderRadius: '12px', gap: '2px' }}>
+        <div style={{ flex: '0 0 auto', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          <div className="view-btn-container" style={{ display: 'flex', background: 'var(--bg-input)', padding: '3px', borderRadius: '10px', gap: '2px' }}>
             <button onClick={() => { navigate('/admin'); setViewMode('day'); }} className={`view-btn ${viewMode === 'day' ? 'active' : ''}`}>DÍA</button>
             <button onClick={() => { navigate('/admin'); setViewMode('timeline'); }} className={`view-btn ${viewMode === 'timeline' ? 'active' : ''}`}>SEMANA</button>
             <button onClick={() => { navigate('/admin'); setViewMode('month'); }} className={`view-btn ${viewMode === 'month' ? 'active' : ''}`}>MES</button>
             <button onClick={() => { navigate('/admin/reports'); setViewMode('reports'); }} className={`view-btn ${viewMode === 'reports' ? 'active' : ''}`}>REPORTES</button>
             <button onClick={() => { navigate('/admin/users'); setViewMode('users'); }} className={`view-btn ${viewMode === 'users' ? 'active' : ''}`}>USUARIOS</button>
           </div>
-          <button className="btn btn-primary" onClick={() => { setSelectedEvent(null); setConfirm(null); setIsRightSidebarOpen(true); }} style={{ padding: '0.8rem 1.75rem', fontSize: '0.85rem' }}>NUEVA CITA</button>
+          <button className="btn btn-primary" onClick={() => { setSelectedEvent(null); setConfirm(null); setIsRightSidebarOpen(true); }} style={{ padding: '0.6rem 1.25rem', fontSize: '0.75rem' }}>NUEVA CITA</button>
         </div>
       </header>
 
@@ -405,7 +515,7 @@ export default function Admin() {
         <div className="calendar-main-area">
 
           {/* Color legend */}
-          <div className="status-legend">
+          <div className="status-legend" style={{ flexWrap: 'wrap' }}>
             {[['confirmed', 'Confirmada'], ['pending', 'Pendiente'], ['rejected', 'Rechazada'], ['completed', 'Realizada']].map(([s, label]) => (
               <div key={s} className="status-legend-item">
                 <span className="status-dot" style={{ background: STATUS_COLOR[s] }} />
@@ -522,8 +632,8 @@ export default function Admin() {
                 </div>
 
               ) : viewMode === 'reports' ? (
-                <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <div className="admin-content-pad" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto' }}>
+                  <div className="admin-reports-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                     <h3 style={{ fontWeight: 900, margin: 0, fontSize: '1.5rem' }}>Reporte de Citas</h3>
                     <button 
                       className="btn btn-primary"
@@ -545,7 +655,7 @@ export default function Admin() {
                   </div>
                   
                   <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-                    <div style={{ display: 'flex', gap: '0.5rem', background: 'white', padding: '6px', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
+                    <div className="report-filters-wrapper" style={{ display: 'flex', gap: '0.5rem', background: 'white', padding: '6px', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
                       <select className="form-control" style={{ width: '200px', border: 'none', background: 'transparent', fontWeight: 700 }} value={reportDateFilter} onChange={(e) => setReportDateFilter(e.target.value)}>
                         <option value="all">Todas las Fechas</option>
                         <option value="day">Día de Hoy</option>
@@ -565,7 +675,7 @@ export default function Admin() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+                  <div className="admin-reports-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
                     <div style={{ background: 'white', padding: '1.25rem', borderRadius: '14px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.04)' }}>
                       <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total en Filtro</div>
                       <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1, marginTop: '0.5rem' }}>{filteredReports.length}</div>
@@ -601,11 +711,11 @@ export default function Admin() {
                         ) : (
                           filteredReports.map(app => (
                             <tr key={app.id}>
-                              <td style={{ fontWeight: 800 }}>{app.date} <br/><span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 600 }}>{app.time}</span></td>
-                              <td style={{ fontWeight: 800 }}>{app.name}</td>
-                              <td style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>{app.phone}<br/>{app.email}</td>
-                              <td style={{ fontWeight: 600 }}>{app.service}</td>
-                              <td>
+                              <td data-label="Fecha / Hora" style={{ fontWeight: 800 }}>{app.date} <br/><span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 600 }}>{app.time}</span></td>
+                              <td data-label="Paciente" style={{ fontWeight: 800 }}>{app.name}</td>
+                              <td data-label="Contacto" style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>{app.phone}<br/>{app.email}</td>
+                              <td data-label="Servicio" style={{ fontWeight: 600 }}>{app.service}</td>
+                              <td data-label="Estado">
                                 <span style={{
                                   display: 'inline-block',
                                   padding: '3px 10px',
@@ -627,13 +737,13 @@ export default function Admin() {
                   </div>
                 </div>
               ) : viewMode === 'users' ? (
-                <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+                <div className="admin-content-pad" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto' }}>
                   <div style={{ marginBottom: '2rem' }}>
                     <h3 style={{ fontWeight: 900, margin: 0, fontSize: '1.5rem', marginBottom: '0.5rem' }}>Gestión de Administradores</h3>
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Crea accesos para el personal de la clínica. Ellos podrán iniciar sesión con el usuario y contraseña que definas aquí.</p>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '2rem', height: '100%', minHeight: 0 }}>
+                  <div className="admin-users-grid">
                     {/* Form to create admin */}
                     <div style={{ background: 'white', padding: '1.5rem', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                       <h4 style={{ fontWeight: 800, fontSize: '1.1rem', marginBottom: '0.5rem' }}>Nuevo Administrador</h4>
@@ -673,10 +783,10 @@ export default function Admin() {
                         <tbody>
                           {admins.map(a => (
                             <tr key={a.id}>
-                              <td style={{ fontWeight: 800 }}>{a.name}</td>
-                              <td style={{ fontWeight: 600, color: 'var(--primary)' }}>@{a.username}</td>
-                              <td><span style={{ background: 'rgba(22,163,74,0.1)', color: '#16A34A', padding: '3px 10px', borderRadius: '20px', fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase' }}>Administrador</span></td>
-                              <td>
+                              <td data-label="Nombre" style={{ fontWeight: 800 }}>{a.name}</td>
+                              <td data-label="Usuario" style={{ fontWeight: 600, color: 'var(--primary)' }}>@{a.username}</td>
+                              <td data-label="Rol"><span style={{ background: 'rgba(22,163,74,0.1)', color: '#16A34A', padding: '3px 10px', borderRadius: '20px', fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase' }}>Administrador</span></td>
+                              <td data-label="Acciones">
                                 {a.username !== user?.username && (
                                   <button onClick={() => {
                                     if(window.confirm(`¿Seguro que deseas eliminar el acceso de ${a.name}?`)) {
