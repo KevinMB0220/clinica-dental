@@ -105,14 +105,6 @@ export default function Booking() {
     }, 1200);
   };
 
-    <div 
-      onClick={onClick} 
-      ref={ref}
-      style={{ background: 'var(--bg-input)', border: '1.5px solid transparent', borderRadius: '12px', padding: '0.75rem 1rem', fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
-    >
-      <span>{value || 'Seleccionar fecha'}</span>
-    </div>
-
   return (
     <div style={{ 
       minHeight: 'calc(100vh - 90px)', 
