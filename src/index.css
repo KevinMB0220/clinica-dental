@@ -87,6 +87,19 @@ h6 {
 }
 
 /* ── Layout Utilities ───────────────────────────────────── */
+.admin-layout {
+  padding-left: 80px;
+  transition: padding-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.admin-layout.sidebar-hovered {
+  padding-left: 260px;
+}
+@media (max-width: 1024px) {
+  .admin-layout, .admin-layout.sidebar-hovered {
+    padding-left: 0 !important;
+  }
+}
+
 .dashboard-card {
   background: var(--bg-card);
   border-radius: var(--radius-card);

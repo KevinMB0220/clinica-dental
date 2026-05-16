@@ -28,13 +28,11 @@ function AppContent() {
         />
       )}
 
-      <div className="main-layout" style={{ 
+      <div className={`main-layout ${isAdminPath ? 'admin-layout' : ''} ${isLeftSidebarHovered ? 'sidebar-hovered' : ''}`} style={{ 
         flex: 1, 
         display: 'flex', 
         flexDirection: 'column',
-        minWidth: 0, /* Permite que el contenido se encoja correctamente */
-        transition: 'padding-left 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-        paddingLeft: isAdminPath ? (isLeftSidebarHovered ? '260px' : '80px') : 0
+        minWidth: 0 /* Permite que el contenido se encoja correctamente */
       }}>
         {!isAdminPath && <MobileHeader />}
         {!isAdminPath && <Navbar />}
