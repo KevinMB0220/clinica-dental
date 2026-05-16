@@ -1,907 +1,618 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
-import { createPortal } from 'react-dom';
-import { useAuth } from '../context/AuthContext';
 import { useAppointments } from '../context/AppointmentContext';
-import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, Edit2, Check, X, Search, Calendar as CalendarIcon, Download, Plus, List, ChevronLeft, ChevronRight, Sparkles, Shield, CalendarDays, CalendarClock, BadgeCheck, CalendarX, Activity, Clock3, CheckCircle, XCircle } from 'lucide-react';
 
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import listPlugin from '@fullcalendar/list';
+
+const HOURS = Array.from({ length: 13 }, (_, i) => i + 8);
+const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+const SLOT_WIDTH = 130;
+const PILL_H = 44;
+const PILL_GAP = 6;
+const ROW_PADDING = 16;
+const DURATIONS = [30, 60, 90, 120];
+
+const SPECIALTIES = ['Ortodoncia', 'Odontología General', 'Odontopediatría', 'Implantes', 'Endodoncia', 'Periodoncia', 'Quiropodia'];
+const COUNTRY_CODES = [
+  { code: '+506', flag: '🇨🇷' }, { code: '+507', flag: '🇵🇦' }, { code: '+505', flag: '🇳🇮' },
+  { code: '+504', flag: '🇭🇳' }, { code: '+502', flag: '🇬🇹' }, { code: '+503', flag: '🇸🇻' },
+  { code: '+52', flag: '🇲🇽' }, { code: '+1', flag: '🇺🇸' }, { code: '+57', flag: '🇨🇴' },
+];
+const TIME_SLOTS = (() => {
+  const s = [];
+  for (let h = 8; h <= 19; h++) {
+    const p = h >= 12 ? 'PM' : 'AM';
+    const d = (h > 12 ? h - 12 : h).toString().padStart(2, '0');
+    s.push(`${d}:00 ${p}`, `${d}:30 ${p}`);
+  }
+  s.push('08:00 PM');
+  return s;
+})();
+
+const STATUS_COLOR = {
+  confirmed: 'var(--primary)',
+  pending: '#F59E0B',
+  rejected: '#EF4444',
+};
+
+const parseTimeToMinutes = (timeStr) => {
+  if (!timeStr) return 0;
+  const str = timeStr.trim();
+  if (str.includes('AM') || str.includes('PM')) {
+    const [time, period] = str.split(' ');
+    let [h, m] = time.split(':').map(Number);
+    if (period === 'PM' && h !== 12) h += 12;
+    if (period === 'AM' && h === 12) h = 0;
+    return h * 60 + m;
+  }
+  const [h, m] = str.split(':').map(Number);
+  return h * 60 + m;
+};
+
+const computeLevels = (apps) => {
+  const sorted = [...apps].sort((a, b) => parseTimeToMinutes(a.time) - parseTimeToMinutes(b.time));
+  const result = [];
+  sorted.forEach(app => {
+    const start = parseTimeToMinutes(app.time);
+    const end = start + (app.duration || 30);
+    let level = 0;
+    while (result.some(r => {
+      const rs = parseTimeToMinutes(r.time);
+      return r.level === level && rs < end && (rs + (r.duration || 30)) > start;
+    })) level++;
+    result.push({ ...app, level });
+  });
+  return result;
+};
+
+const getRowHeight = (maxLevel) => ROW_PADDING + (maxLevel + 1) * (PILL_H + PILL_GAP);
+
+const todayDateStr = () => new Date().toISOString().split('T')[0];
+
+const getAvailableSlots = (dateStr) => {
+  if (!dateStr) return TIME_SLOTS;
+  if (dateStr !== todayDateStr()) return TIME_SLOTS;
+  const now = new Date();
+  const minMinutes = now.getHours() * 60 + now.getMinutes() + 30;
+  return TIME_SLOTS.filter(s => parseTimeToMinutes(s) >= minMinutes);
+};
+
+// Returns true if a date+time combination is in the valid bookable future (>= now + 30 min)
+const isDateTimeFuture = (dateStr, timeStr) => {
+  if (!dateStr) return false;
+  const today = todayDateStr();
+  if (dateStr > today) return true;
+  if (dateStr < today) return false;
+  const now = new Date();
+  const minMinutes = now.getHours() * 60 + now.getMinutes() + 30;
+  return parseTimeToMinutes(timeStr) >= minMinutes;
+};
 
 const calendarStyles = `
-  .custom-calendar-container {
-    background: var(--bg-card);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
-    padding: 2rem;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .custom-calendar-container::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 6px;
-    background: linear-gradient(90deg, var(--primary), #81C1E9);
-  }
+  .admin-page-container { display: flex; flex-direction: column; height: 100vh; width: 100%; overflow: hidden; background: #FDFDFF; }
 
-  .fc {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background: transparent !important;
-  }
-  
-  /* Remove ugly borders */
-  .fc-theme-standard .fc-scrollgrid {
-    border: none !important;
-  }
-  .fc-theme-standard th, .fc-theme-standard td {
-    border-color: rgba(71, 161, 215, 0.08) !important;
-  }
-  
-  /* Header Styles */
-  .fc-col-header-cell {
-    background: transparent !important;
-    padding: 1rem 0 !important;
-    border: none !important;
-    border-bottom: 2px solid rgba(71, 161, 215, 0.1) !important;
-  }
-  .fc-col-header-cell-cushion {
-    color: var(--text-muted) !important;
-    font-weight: 700 !important;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
-    text-decoration: none !important;
-  }
-  
-  /* Number styling */
-  .fc-daygrid-day-number {
-    color: var(--text-main) !important;
-    font-weight: 700 !important;
-    font-size: 1rem;
-    padding: 0.5rem 0.75rem !important;
-    text-decoration: none !important;
-  }
-  
-  /* Today highlight */
-  .fc-day-today {
-    background: rgba(71, 161, 215, 0.02) !important;
-  }
-  .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
-    background: var(--primary);
-    color: white !important;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin: 4px;
-    padding: 0 !important;
-    box-shadow: var(--shadow-btn);
-  }
-
-  /* Event Styles - we handle background in render */
-  .fc-event {
-    border: none !important;
-    background: transparent !important;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  }
-  .fc-event:hover {
-    transform: translateY(-2px) scale(1.02) !important;
-    z-index: 10 !important;
-  }
-  
-  /* Time slots */
-  .fc-timegrid-slot {
-    height: 2.5em !important;
-  }
-  .fc-timegrid-slot-minor {
-    border-top-style: dashed !important;
-  }
-  .fc-timegrid-axis-cushion {
-    color: var(--text-muted) !important;
-    font-weight: 600 !important;
-    font-size: 0.8rem !important;
-  }
-  
-  .metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  /* Hide default toolbar since we made a custom one */
-  .fc .fc-toolbar {
-    display: none !important;
-  }
-  
-  /* Styling for List View */
-  .fc-list {
-    border: none !important;
-  }
-  .fc-list-day-cushion {
-    background: rgba(71, 161, 215, 0.05) !important;
-    padding: 0.75rem 1rem !important;
-  }
-  .fc-list-event:hover td {
-    background: rgba(71, 161, 215, 0.02) !important;
-  }
-
-  /* Slide-over Sidebar */
-  .sidebar-panel {
-    position: fixed;
-    top: 0; right: 0; bottom: 0;
-    width: 100%;
-    max-width: 400px;
-    background: var(--bg-card);
-    box-shadow: -10px 0 40px rgba(0,0,0,0.1);
-    z-index: 10001;
+  .admin-header-premium {
+    background: white;
+    padding: 0 3rem;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
     display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-  }
-  
-  .sidebar-panel .form-group {
-    margin-bottom: 1rem !important;
-  }
-  
-  .admin-layout-wrapper {
-    transition: padding-right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .admin-layout-wrapper.shifted {
-    padding-right: 400px;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+    height: 90px;
+    flex-shrink: 0;
   }
 
-  /* Mobile responsiveness (iPhone 14 Pro Max & similar - 430px width) */
-  @media (max-width: 768px) {
-    .custom-calendar-container {
-      padding: 0.5rem;
-      border-radius: var(--radius-md);
-      margin-left: -1rem; /* Expand out of container padding slightly */
-      margin-right: -1rem;
-    }
-    .fc-col-header-cell-cushion {
-      font-size: 0.6rem !important;
-      padding: 2px !important;
-    }
-    .fc-timegrid-slot {
-      height: 3em !important;
-    }
-    .fc-timegrid-axis-cushion {
-      font-size: 0.6rem !important;
-    }
-    .dashboard-card {
-      padding: 1rem !important;
-      flex-direction: column !important;
-      align-items: flex-start !important;
-      gap: 0.75rem !important;
-    }
-    .dashboard-card .flex-center {
-      width: 48px !important;
-      height: 48px !important;
-      border-radius: 0.8rem !important;
-    }
-    .dashboard-card svg {
-      width: 24px !important;
-      height: 24px !important;
-    }
-    .dashboard-card .stat-value {
-      font-size: 1.75rem !important;
-    }
-    .metrics-grid {
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 0.75rem !important;
-    }
-    .mobile-wrap {
-      flex-direction: column;
-      width: 100%;
-      gap: 1rem !important;
-    }
-    .mobile-full {
-      width: 100% !important;
-      justify-content: center !important;
-    }
-    .mobile-header-text {
-      font-size: 2rem !important;
-    }
-    .hide-mobile {
-      display: none !important;
-    }
-    .admin-layout-wrapper.shifted {
-      padding-right: 0 !important;
-    }
-  }
+  .stat-card-top { background: #F8F9FA; padding: 0.6rem 1.25rem; border-radius: 14px; display: flex; flex-direction: column; min-width: 120px; border: 1px solid rgba(0,0,0,0.03); }
+  .stat-card-top .label { font-size: 0.55rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-card-top .value { font-size: 1.25rem; font-weight: 900; color: var(--text-main); line-height: 1.2; }
+
+  .admin-content-body { flex: 1; display: flex; overflow: hidden; position: relative; width: 100%; }
+
+  .calendar-main-area { flex: 1; display: flex; flex-direction: column; padding: 1rem 2rem; min-width: 0; gap: 0.75rem; }
+
+  .status-legend { display: flex; gap: 1.25rem; align-items: center; padding: 0.5rem 0; }
+  .status-legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .timeline-wrapper { position: relative; background: white; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); overflow: hidden; display: flex; flex-direction: column; border: 1px solid rgba(0,0,0,0.06); }
+
+  .timeline-viewport { overflow-x: auto; overflow-y: auto; position: relative; }
+
+  .view-btn { border: none; background: transparent; font-size: 0.7rem; font-weight: 700; padding: 0.5rem 1.25rem; border-radius: 9px; cursor: pointer; color: var(--text-muted); transition: all 0.15s ease; letter-spacing: 0.04em; }
+  .view-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-weight: 900; }
+
+  .timeline-grid { display: grid; grid-template-columns: 140px repeat(${HOURS.length * 2}, ${SLOT_WIDTH}px); position: relative; width: max-content; }
+
+  .timeline-header-cell { position: sticky; top: 0; background: white; z-index: 50; padding: 1rem; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid rgba(0,0,0,0.08); text-align: center; }
+
+  .timeline-day-label { position: sticky; left: 0; background: white; z-index: 40; padding: 0 1.5rem; font-weight: 900; font-size: 0.85rem; border-right: 1px solid rgba(0,0,0,0.08); border-bottom: 1px solid rgba(0,0,0,0.04); min-width: 140px; flex-shrink: 0; display: flex; align-items: center; color: var(--text-main); }
+
+  .timeline-day-row { grid-column: 1 / -1; display: flex; position: relative; }
+  .timeline-cell { border-right: 1px solid rgba(0,0,0,0.02); border-bottom: 1px solid rgba(0,0,0,0.04); flex-shrink: 0; width: ${SLOT_WIDTH}px; }
+  .timeline-day-row:last-child .timeline-cell { border-bottom: none; }
+  .timeline-day-row:last-child .timeline-day-label { border-bottom: none; }
+
+  .now-line { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--primary); z-index: 60; pointer-events: none; }
+  .now-line::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
+
+  .appointment-pill { position: absolute; height: ${PILL_H}px; border-radius: 22px; padding: 0 1rem; display: flex; align-items: center; font-size: 0.72rem; font-weight: 800; color: white; box-shadow: 0 3px 10px rgba(0,0,0,0.12); z-index: 30; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: filter 0.15s; }
+  .appointment-pill:hover { filter: brightness(1.1); }
+
+  .right-management-sidebar { width: 420px; background: white; border-left: 1px solid rgba(0,0,0,0.06); display: flex; flex-direction: column; z-index: 200; flex-shrink: 0; overflow-y: auto; }
+
+  .day-table { width: 100%; border-collapse: collapse; }
+  .day-table th { text-align: left; padding: 1.25rem; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 800; border-bottom: 1px solid rgba(0,0,0,0.05); }
+  .day-table td { padding: 1.25rem; font-size: 0.85rem; border-bottom: 1px solid rgba(0,0,0,0.03); }
+
+  .duration-btn { flex: 1; padding: 0.5rem 0.25rem; border-radius: 8px; font-size: 0.72rem; font-weight: 800; cursor: pointer; transition: all 0.15s; }
+
+  .confirm-box { padding: 1rem 1.25rem; border-radius: 12px; background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.15); }
+
+  /* Month Calendar */
+  .fc-theme-standard .fc-scrollgrid { border: none !important; }
+  .fc-daygrid-day { border: 1px solid rgba(0,0,0,0.03) !important; cursor: pointer; }
+  .fc-daygrid-day:hover { background: rgba(22,163,74,0.04) !important; }
+  .fc-view-harness { border-bottom: 1px solid rgba(0,0,0,0.05) !important; }
+  .fc-col-header-cell-cushion { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); text-decoration: none; }
+  .fc-daygrid-day-number { font-size: 0.8rem; font-weight: 700; color: var(--text-main); text-decoration: none; padding: 0.5rem 0.75rem; }
+  .fc-toolbar-title { font-size: 1rem !important; font-weight: 900 !important; letter-spacing: -0.02em; text-transform: capitalize; }
+  .fc-toolbar { padding: 1rem 1.25rem !important; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 0 !important; }
+  .fc-button { background: transparent !important; border: 1px solid rgba(0,0,0,0.1) !important; color: var(--text-main) !important; font-size: 0.7rem !important; font-weight: 800 !important; border-radius: 8px !important; padding: 0.35rem 0.75rem !important; box-shadow: none !important; text-transform: uppercase !important; letter-spacing: 0.04em; }
+  .fc-button:hover { background: var(--bg-input) !important; }
+  .fc-button-active, .fc-button:active { background: var(--primary) !important; color: white !important; border-color: var(--primary) !important; }
+  .fc-today-button { opacity: 1 !important; }
+  .fc-daygrid-day.fc-day-today { background: rgba(22,163,74,0.05) !important; }
+  .fc-event { border-radius: 6px !important; border: none !important; font-size: 0.7rem !important; font-weight: 700 !important; padding: 2px 6px !important; cursor: pointer; }
 `;
 
 export default function Admin() {
-  const { user: authUser } = useAuth();
-  const { appointments, addAppointment, deleteAppointment, updateAppointment } = useAppointments();
-  const navigate = useNavigate();
-  const calendarRef = useRef(null);
+  const { appointments, addAppointment, updateAppointment } = useAppointments();
+  const viewportRef = useRef(null);
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode] = useState('calendar'); // 'calendar' or 'list'
-  const [calendarTitle, setCalendarTitle] = useState('');
-  const [activeCalView, setActiveCalView] = useState('timeGridWeek');
+  const [viewMode, setViewMode] = useState('timeline');
   const [selectedEvent, setSelectedEvent] = useState(null);
-  
-  // Sidebar State
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [newAppForm, setNewAppForm] = useState({
-    name: '', email: '', phone: '', service: 'Limpieza Dental', date: '', time: ''
+  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
+  const [now, setNow] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [newForm, setNewForm] = useState({ name: '', email: '', phone: '', countryCode: '+506', service: SPECIALTIES[0], date: '', time: '', description: '' });
+  const [editDuration, setEditDuration] = useState(30);
+  const [editFields, setEditFields] = useState({ email: '', phone: '', countryCode: '+506', date: '', time: '' });
+  const [confirm, setConfirm] = useState(null); // { type: 'reject' | 'delete' }
+
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 30000);
+    return () => clearInterval(t);
+  }, []);
+
+  const getTimeX = (timeStr) => {
+    const minutes = parseTimeToMinutes(timeStr);
+    return (minutes - 8 * 60) * (SLOT_WIDTH / 30) + 140;
+  };
+
+  const getPillWidth = (duration = 30) => (duration || 30) * (SLOT_WIDTH / 30);
+
+  const nowLineX = useMemo(() => {
+    const h = now.getHours();
+    const m = now.getMinutes();
+    if (h < 8 || h >= 20) return null;
+    return (h * 60 + m - 8 * 60) * (SLOT_WIDTH / 30) + 140;
+  }, [now]);
+
+  useEffect(() => {
+    if (viewMode === 'timeline' && viewportRef.current && nowLineX !== null) {
+      viewportRef.current.scrollLeft = nowLineX - viewportRef.current.offsetWidth / 2;
+    }
+  }, [viewMode]);
+
+  const stats = useMemo(() => ({
+    total: appointments.length,
+    confirmed: appointments.filter(a => a.status === 'confirmed').length,
+    pending: appointments.filter(a => a.status === 'pending').length,
+    rejected: appointments.filter(a => a.status === 'rejected').length,
+  }), [appointments]);
+
+  const todayStr = now.toISOString().split('T')[0];
+  const activeDayStr = selectedDate || todayStr;
+  const dayAppointments = useMemo(() => appointments.filter(a => a.date === activeDayStr), [appointments, activeDayStr]);
+
+  const openEvent = (app) => {
+    setSelectedEvent(app);
+    setEditDuration(app.duration || 30);
+    setEditFields({ email: app.email || '', phone: app.phone || '', countryCode: app.countryCode || '+506', date: app.date || '', time: app.time || '' });
+    setConfirm(null);
+    setIsRightSidebarOpen(true);
+  };
+
+  const closeSidebar = () => {
+    setIsRightSidebarOpen(false);
+    setSelectedEvent(null);
+    setConfirm(null);
+  };
+
+  const handleApprove = () => {
+    updateAppointment(selectedEvent.id, { status: 'confirmed', duration: editDuration, ...editFields });
+    closeSidebar();
+  };
+
+  const handleConfirmAction = () => {
+    updateAppointment(selectedEvent.id, { status: 'rejected', ...editFields });
+    closeSidebar();
+  };
+
+  const badgeStyle = (status) => ({
+    display: 'inline-block',
+    padding: '3px 10px',
+    borderRadius: '20px',
+    fontSize: '0.65rem',
+    fontWeight: 800,
+    textTransform: 'uppercase',
+    background: status === 'confirmed' ? 'rgba(22,163,74,0.1)' : status === 'rejected' ? 'rgba(239,68,68,0.1)' : 'rgba(245,158,11,0.1)',
+    color: STATUS_COLOR[status] || '#888',
   });
 
-  // TEMPORARY BYPASS: Use a dummy admin user if not authenticated
-  const user = authUser || { name: 'Admin Temp', email: 'admin@temp.com', role: 'admin' };
-
-  /*
-  useEffect(() => {
-    if (!authUser) {
-      navigate('/login');
-    }
-  }, [authUser, navigate]);
-
-  if (!authUser) return null;
-  */
-
-  const isAdmin = user.role === 'admin';
-  
-  const baseAppointments = isAdmin 
-    ? appointments 
-    : appointments.filter(app => app.userId === user.email);
-
-  const userAppointments = useMemo(() => {
-    if (baseAppointments.length > 0) return baseAppointments;
-    
-    // Inyectar citas de prueba si está vacío para previsualización
-    const today = new Date();
-    const dateStr = today.toISOString().split('T')[0];
-    return [
-      {
-        id: 'demo-1',
-        name: 'Carlos Mendoza (Demo)',
-        email: 'carlos@demo.com',
-        phone: '8888-8888',
-        service: 'Ortodoncia',
-        date: dateStr,
-        time: '10:00',
-        status: 'confirmed'
-      },
-      {
-        id: 'demo-2',
-        name: 'Lucía Vargas (Demo)',
-        email: 'lucia@demo.com',
-        phone: '7777-7777',
-        service: 'Limpieza Dental',
-        date: dateStr,
-        time: '14:30',
-        status: 'pending'
-      }
-    ];
-  }, [baseAppointments]);
-
-  const filteredAppointments = userAppointments.filter(app => 
-    app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    app.service.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const calendarEvents = useMemo(() => {
-    return userAppointments.map(app => {
-      const startStr = `${app.date}T${app.time}`;
-      let endStr = null;
-      try {
-        const startDate = new Date(startStr);
-        if (!isNaN(startDate.getTime())) {
-          const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // +1 hour duration
-          endStr = endDate.toISOString();
-        }
-      } catch (e) { }
-
-      // Custom gradients based on status matching the landing palette
-      let bgStyle = '';
-      let shadowColor = '';
-      if (app.status === 'confirmed') {
-        bgStyle = 'linear-gradient(135deg, #10B981 0%, #059669 100%)';
-        shadowColor = 'rgba(16, 185, 129, 0.4)';
-      } else if (app.status === 'cancelled') {
-        bgStyle = 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)';
-        shadowColor = 'rgba(239, 68, 68, 0.4)';
-      } else {
-        bgStyle = 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)';
-        shadowColor = 'rgba(245, 158, 11, 0.4)';
-      }
-
-      return {
-        id: app.id,
-        title: app.name,
-        start: startStr,
-        ...(endStr && { end: endStr }),
-        allDay: false,
-        extendedProps: { ...app, bgStyle, shadowColor }
-      };
-    });
-  }, [userAppointments]);
-
-  const stats = useMemo(() => {
-    return {
-      total: userAppointments.length,
-      pending: userAppointments.filter(a => a.status === 'pending').length,
-      confirmed: userAppointments.filter(a => a.status === 'confirmed').length,
-      cancelled: userAppointments.filter(a => a.status === 'cancelled').length,
-    }
-  }, [userAppointments]);
-
-  const handleEventClick = (info) => {
-    setSelectedEvent(info.event.extendedProps);
-  };
-
-  const renderEventContent = (eventInfo) => {
-    const { bgStyle, shadowColor, name, service } = eventInfo.event.extendedProps;
-    
-    if (eventInfo.view.type === 'listDay') {
-      return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.25rem 0' }}>
-          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: bgStyle }} />
-          <strong style={{ color: 'var(--text-main)', fontSize: '0.95rem' }}>{name}</strong>
-          <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: 600 }}>• {service}</span>
-        </div>
-      );
-    }
-    
-    return (
-      <div style={{ 
-        background: bgStyle, 
-        borderRadius: '8px', 
-        padding: '6px 10px', 
-        width: '100%', 
-        height: '100%', 
-        color: 'white', 
-        display: 'flex', 
-        flexDirection: 'column', 
-        overflow: 'hidden',
-        boxShadow: `0 4px 12px ${shadowColor}`,
-        border: '1px solid rgba(255,255,255,0.2)'
-      }}>
-        <div style={{ fontWeight: 800, fontSize: '0.85rem', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', letterSpacing: '0.02em' }}>
-          {name}
-        </div>
-        <div style={{ fontSize: '0.75rem', opacity: 0.9, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', marginBottom: '4px' }}>
-          {service}
-        </div>
-        <div style={{ fontSize: '0.7rem', marginTop: 'auto', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(0,0,0,0.15)', padding: '2px 6px', borderRadius: '4px', width: 'fit-content' }}>
-          <Clock3 size={10} /> {eventInfo.timeText}
-        </div>
-      </div>
-    );
-  };
-
-  const updateCalendarTitle = () => {
-    if (calendarRef.current) {
-      setCalendarTitle(calendarRef.current.getApi().view.title);
-    }
-  };
-
-  useEffect(() => {
-    // Small delay to ensure calendar is mounted before getting title
-    setTimeout(updateCalendarTitle, 100);
-  }, [viewMode, activeCalView, userAppointments]);
-
-  useEffect(() => {
-    // Forzar actualización de tamaño del calendario durante la transición
-    if (viewMode === 'calendar') {
-      let start = Date.now();
-      let timer = setInterval(() => {
-        if (Date.now() - start > 450) clearInterval(timer);
-        if (calendarRef.current) calendarRef.current.getApi().updateSize();
-      }, 30);
-      return () => clearInterval(timer);
-    }
-  }, [isSidebarOpen, viewMode]);
-
-  const handleAddAppointment = (e) => {
-    e.preventDefault();
-    if (!newAppForm.name || !newAppForm.date || !newAppForm.time) return;
-    
-    addAppointment({
-      ...newAppForm,
-      userId: user.email // Enlace al usuario actual o dejar como manual
-    });
-    
-    setIsSidebarOpen(false);
-    setNewAppForm({ name: '', email: '', phone: '', service: 'Limpieza Dental', date: '', time: '' });
-  };
-
   return (
-    <div className={`admin-layout-wrapper ${isSidebarOpen ? 'shifted' : ''}`} style={{ background: '#FDFDFF', minHeight: '100vh', paddingBottom: '6rem' }}>
+    <div className="admin-page-container">
       <style>{calendarStyles}</style>
 
-      {isSidebarOpen && (
-        <style>{`
-          nav, footer, .admin-header-section, .metrics-grid, .view-toggle-wrapper {
-            display: none !important;
-          }
-          .admin-layout-wrapper {
-            padding-top: 1.5rem !important;
-          }
-        `}</style>
-      )}
+      <header className="admin-header-premium">
+        <div style={{ flex: '0 0 auto' }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.04em', margin: 0 }}>Panel de Control</h1>
+          <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Dental Turrialba</div>
+        </div>
 
-      {/* ── HEADER AREA CON GLASSMORPHISM ── */}
-      <section className="admin-header-section" style={{ 
-        padding: '1rem 0 1rem', 
-        background: 'linear-gradient(180deg, rgba(71, 161, 215, 0.05) 0%, rgba(255,255,255,0) 100%)',
-        position: 'relative'
-      }}>
-        <div className="container">
-          <div className="flex-between" style={{ flexWrap: 'wrap', gap: '1rem' }}>
-            <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="mobile-header-text" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.04em', lineHeight: 1.1, marginBottom: '0.5rem' }}>
-                {isAdmin ? 'Panel de Control' : 'Mis Citas'}
-              </h1>
-            </motion.div>
-            
-            <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-              {!isAdmin && (
-                 <Link to="/booking" className="btn btn-primary" style={{ padding: '1rem 2rem' }}>
-                   Agendar Nueva <Plus size={18} style={{ marginLeft: '4px' }} />
-                 </Link>
-              )}
-
-              {isAdmin && (
-                <>
-                  <button 
-                    className="btn btn-primary" 
-                    style={{ padding: '0.85rem 1.5rem' }}
-                    onClick={() => setIsSidebarOpen(true)}
-                  >
-                    Nueva Cita <Plus size={18} style={{ marginLeft: '4px' }} />
-                  </button>
-                  <button 
-                    className="btn" 
-                    style={{ background: 'var(--bg-card)', color: 'var(--text-main)', boxShadow: 'var(--shadow-card)', border: '1px solid var(--border-light)', padding: '0.85rem 1.5rem' }}
-                    onClick={() => {
-                      const headers = 'Name,Email,Phone,Service,Date,Time,Status\n';
-                      const rows = appointments.map(a => `${a.name},${a.email},${a.phone},${a.service},${a.date},${a.time},${a.status}`).join('\n');
-                      const blob = new Blob([headers + rows], { type: 'text/csv' });
-                      const url = window.URL.createObjectURL(blob);
-                      const a = document.createElement('a');
-                      a.setAttribute('href', url);
-                      a.setAttribute('download', 'appointments.csv');
-                      a.click();
-                    }}
-                  >
-                    <span className="hide-mobile">Exportar CSV</span> <Download size={18} style={{ marginLeft: '8px' }} />
-                  </button>
-                </>
-              )}
-            </motion.div>
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>
+          <div className="stat-card-top">
+            <span className="label">Total</span>
+            <span className="value">{stats.total}</span>
+          </div>
+          <div className="stat-card-top">
+            <span className="label">Confirmadas</span>
+            <span className="value" style={{ color: STATUS_COLOR.confirmed }}>{stats.confirmed}</span>
+          </div>
+          <div className="stat-card-top">
+            <span className="label">Pendientes</span>
+            <span className="value" style={{ color: STATUS_COLOR.pending }}>{stats.pending}</span>
+          </div>
+          <div className="stat-card-top">
+            <span className="label">Rechazadas</span>
+            <span className="value" style={{ color: STATUS_COLOR.rejected }}>{stats.rejected}</span>
           </div>
         </div>
-      </section>
 
-      <section className="container">
-        {/* ── METRICS GRID ── */}
-        {isAdmin && (
-          <div className="metrics-grid">
-            {[
-              { label: 'Total Citas', value: stats.total, icon: CalendarDays, color: 'var(--primary)', bg: 'rgba(71, 161, 215, 0.12)' },
-              { label: 'Pendientes', value: stats.pending, icon: CalendarClock, color: '#F59E0B', bg: 'rgba(245, 158, 11, 0.12)' },
-              { label: 'Confirmadas', value: stats.confirmed, icon: BadgeCheck, color: 'var(--success)', bg: 'rgba(16, 185, 129, 0.12)' },
-              { label: 'Canceladas', value: stats.cancelled, icon: CalendarX, color: 'var(--danger)', bg: 'rgba(239, 68, 68, 0.12)' }
-            ].map((stat, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, y: 20 }} 
-                animate={{ opacity: 1, y: 0 }} 
-                transition={{ delay: i * 0.1 }} 
-                className="dashboard-card" 
-                style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', padding: '1.5rem', position: 'relative', overflow: 'hidden' }}
-              >
-                {/* Decorative background circle */}
-                <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', borderRadius: '50%', background: stat.bg, opacity: 0.6, zIndex: 0 }}></div>
-                
-                <div className="flex-center" style={{ width: 60, height: 60, borderRadius: '1.2rem', background: 'var(--bg-card)', color: stat.color, zIndex: 1, boxShadow: `0 8px 24px ${stat.bg}`, border: `2px solid ${stat.bg}` }}>
-                  <stat.icon size={28} strokeWidth={2.5} />
-                </div>
-                <div style={{ zIndex: 1 }}>
-                  <div className="stat-value" style={{ fontSize: '2.25rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.1, letterSpacing: '-0.03em' }}>{stat.value}</div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '0.2rem' }}>{stat.label}</div>
-                </div>
-              </motion.div>
+        <div style={{ flex: '0 0 auto', display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+          <div style={{ display: 'flex', background: 'var(--bg-input)', padding: '4px', borderRadius: '12px', gap: '2px' }}>
+            <button onClick={() => setViewMode('day')} className={`view-btn ${viewMode === 'day' ? 'active' : ''}`}>DÍA</button>
+            <button onClick={() => setViewMode('timeline')} className={`view-btn ${viewMode === 'timeline' ? 'active' : ''}`}>SEMANA</button>
+            <button onClick={() => setViewMode('month')} className={`view-btn ${viewMode === 'month' ? 'active' : ''}`}>MES</button>
+          </div>
+          <button className="btn btn-primary" onClick={() => { setSelectedEvent(null); setConfirm(null); setIsRightSidebarOpen(true); }} style={{ padding: '0.8rem 1.75rem', fontSize: '0.85rem' }}>NUEVA CITA</button>
+        </div>
+      </header>
+
+      <div className="admin-content-body">
+        <div className="calendar-main-area">
+
+          {/* Color legend */}
+          <div className="status-legend">
+            {[['confirmed', 'Confirmada'], ['pending', 'Pendiente'], ['rejected', 'Rechazada']].map(([s, label]) => (
+              <div key={s} className="status-legend-item">
+                <span className="status-dot" style={{ background: STATUS_COLOR[s] }} />
+                {label}
+              </div>
             ))}
           </div>
-        )}
 
-        {/* ── CUSTOM TOOLBAR & VIEW TOGGLE ── */}
-        <div className="mobile-wrap" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-          
-          <div className="mobile-full view-toggle-wrapper" style={{ display: 'flex', background: 'var(--bg-card)', padding: '6px', borderRadius: 'var(--radius-pill)', boxShadow: 'var(--shadow-card)', gap: '4px' }}>
-            <button 
-              onClick={() => setViewMode('calendar')} 
-              className={`btn ${viewMode === 'calendar' ? 'btn-active' : 'btn-outline'}`}
-              style={{ flex: 1, padding: '0.6rem 1rem', boxShadow: viewMode === 'calendar' ? 'var(--shadow-btn)' : 'none', border: 'none', fontSize: '0.9rem' }}
-            >
-              <CalendarIcon size={16} /> <span className="hide-mobile">Calendario</span>
-            </button>
-            <button 
-              onClick={() => setViewMode('list')} 
-              className={`btn ${viewMode === 'list' ? 'btn-active' : 'btn-outline'}`}
-              style={{ flex: 1, padding: '0.6rem 1rem', boxShadow: viewMode === 'list' ? 'var(--shadow-btn)' : 'none', border: 'none', fontSize: '0.9rem' }}
-            >
-              <List size={16} /> <span className="hide-mobile">Tabla</span>
-            </button>
-          </div>
+          <div className="timeline-wrapper" style={{ flex: viewMode === 'timeline' ? '0 0 auto' : '1' }}>
+            <div className="timeline-viewport" ref={viewportRef} style={{ overflowY: viewMode === 'timeline' ? 'hidden' : 'auto', flex: viewMode !== 'timeline' ? '1' : undefined }}>
 
-          {viewMode === 'calendar' && (
-            <div className="mobile-wrap" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button className="btn-icon" onClick={() => { calendarRef.current.getApi().prev(); updateCalendarTitle(); }} style={{ width: 40, height: 40 }}>
-                  <ChevronLeft size={20} />
-                </button>
-                <button className="btn-icon" onClick={() => { calendarRef.current.getApi().today(); updateCalendarTitle(); }} style={{ width: 'auto', padding: '0 1rem', borderRadius: 'var(--radius-pill)', fontWeight: 700, fontSize: '0.9rem' }}>
-                  Hoy
-                </button>
-                <button className="btn-icon" onClick={() => { calendarRef.current.getApi().next(); updateCalendarTitle(); }} style={{ width: 40, height: 40 }}>
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, minWidth: '150px', textAlign: 'center' }}>
-                {calendarTitle}
-              </h2>
-              <div className="mobile-full" style={{ display: 'flex', background: 'var(--bg-input)', padding: '4px', borderRadius: 'var(--radius-pill)', justifyContent: 'center' }}>
-                {['dayGridMonth', 'timeGridWeek', 'listDay'].map((v) => (
-                  <button 
-                    key={v}
-                    onClick={() => { setActiveCalView(v); calendarRef.current.getApi().changeView(v); updateCalendarTitle(); }}
-                    style={{ 
-                      flex: 1,
-                      padding: '0.5rem 0.75rem', 
-                      background: activeCalView === v ? 'white' : 'transparent',
-                      color: activeCalView === v ? 'var(--primary)' : 'var(--text-muted)',
-                      border: 'none', borderRadius: 'var(--radius-pill)', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer',
-                      boxShadow: activeCalView === v ? '0 2px 8px rgba(0,0,0,0.05)' : 'none', transition: 'var(--transition)'
-                    }}
-                  >
-                    {v === 'dayGridMonth' ? 'Mes' : v === 'timeGridWeek' ? 'Semana' : 'Día'}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {viewMode === 'list' && (
-            <div style={{ position: 'relative', width: '300px' }}>
-              <Search size={18} style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-              <input 
-                type="text" 
-                className="form-control" 
-                placeholder="Buscar pacientes o servicios..." 
-                style={{ paddingLeft: '3.5rem', borderRadius: 'var(--radius-pill)', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)', border: 'none' }}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          )}
-        </div>
-
-        {/* ── MAIN CONTENT AREA ── */}
-        <AnimatePresence mode="wait">
-          {viewMode === 'calendar' ? (
-            <motion.div 
-              key="calendar-view"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="custom-calendar-container"
-            >
-              <FullCalendar
-                ref={calendarRef}
-                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
-                initialView={activeCalView}
-                events={calendarEvents}
-                eventClick={handleEventClick}
-                eventContent={renderEventContent}
-                height="auto"
-                slotMinTime="08:00:00"
-                slotMaxTime="18:00:00"
-                slotDuration="00:30:00"
-                allDaySlot={false}
-                expandRows={false}
-                stickyHeaderDates={true}
-                nowIndicator={true}
-                dayMaxEvents={0}
-                navLinks={true}
-                navLinkDayClick={(date) => {
-                  setActiveCalView('listDay');
-                  calendarRef.current.getApi().changeView('listDay', date);
-                  updateCalendarTitle();
-                }}
-                moreLinkContent={(args) => {
-                  return (
-                    <div style={{ background: 'var(--primary)', color: 'white', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600, marginTop: '2px', textAlign: 'center' }}>
-                      {args.num} {args.num === 1 ? 'cita' : 'citas'}
-                    </div>
-                  )
-                }}
-                locale="es"
-              />
-            </motion.div>
-          ) : (
-            <motion.div 
-              key="list-view"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="dashboard-card" 
-              style={{ padding: '0', overflow: 'hidden' }}
-            >
-              <div className="dashboard-table-container" style={{ boxShadow: 'none', borderRadius: 0 }}>
-                <table>
-                  <thead>
-                    <tr>
-                      <th style={{ paddingLeft: '2rem' }}>Paciente</th>
-                      <th>Especialidad</th>
-                      <th>Fecha y Hora</th>
-                      <th>Estado</th>
-                      <th style={{ textAlign: 'right', paddingRight: '2rem' }}>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <AnimatePresence>
-                      {filteredAppointments.length === 0 ? (
-                        <tr>
-                          <td colSpan="5" style={{ padding: '6rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-                              <CalendarIcon size={48} opacity={0.2} />
-                              <span style={{ fontSize: '1.1rem', fontWeight: 600 }}>No se encontraron citas.</span>
-                            </div>
-                          </td>
-                        </tr>
+              {viewMode === 'day' ? (
+                <div style={{ padding: '2rem' }}>
+                  <h3 style={{ fontWeight: 900, marginBottom: '1.5rem' }}>
+                    {activeDayStr === todayStr ? `Agenda de Hoy — ${activeDayStr}` : `Agenda — ${activeDayStr}`}
+                  </h3>
+                  <table className="day-table">
+                    <thead>
+                      <tr>
+                        <th>Paciente</th>
+                        <th>Servicio</th>
+                        <th>Hora</th>
+                        <th>Estado</th>
+                        <th style={{ textAlign: 'right' }}>Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dayAppointments.length === 0 ? (
+                        <tr><td colSpan="5" style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>No hay citas para este día.</td></tr>
                       ) : (
-                        filteredAppointments.map((app) => (
-                          <motion.tr 
-                            key={app.id} 
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            style={{ transition: 'background 0.2s' }}
-                            whileHover={{ backgroundColor: 'rgba(71, 161, 215, 0.02)' }}
-                          >
-                            <td style={{ paddingLeft: '2rem' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                <div className="btn-icon" style={{ background: 'var(--primary)', color: 'white', fontWeight: 800, fontSize: '1.2rem', boxShadow: '0 4px 12px rgba(71,161,215,0.3)' }}>
-                                  {app.name.charAt(0)}
-                                </div>
-                                <div>
-                                  <div style={{ fontWeight: '700', color: 'var(--text-main)', fontSize: '1.05rem', letterSpacing: '-0.01em' }}>{app.name}</div>
-                                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>{app.email}</div>
-                                </div>
-                              </div>
+                        dayAppointments.map(app => (
+                          <tr key={app.id}>
+                            <td><div style={{ fontWeight: 800 }}>{app.name}</div></td>
+                            <td style={{ fontWeight: 600 }}>{app.service}</td>
+                            <td>{app.time}{app.duration && app.duration !== 30 ? ` · ${app.duration}min` : ''}</td>
+                            <td><span style={badgeStyle(app.status)}>{app.status === 'confirmed' ? 'Confirmada' : app.status === 'rejected' ? 'Rechazada' : 'Pendiente'}</span></td>
+                            <td style={{ textAlign: 'right' }}>
+                              <button onClick={() => openEvent(app)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary)', fontWeight: 800, fontSize: '1rem', padding: '0.25rem 0.5rem', lineHeight: 1 }} title="Gestionar">→</button>
                             </td>
-                            <td>
-                              <span style={{ color: 'var(--text-main)', fontWeight: 600, fontSize: '0.95rem' }}>{app.service}</span>
-                            </td>
-                            <td>
-                              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <span style={{ fontWeight: 700, color: 'var(--text-main)' }}>{app.date}</span>
-                                <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: 600 }}>{app.time}</span>
-                              </div>
-                            </td>
-                            <td>
-                              <span className={`badge ${app.status === 'confirmed' ? 'badge-success' : app.status === 'cancelled' ? 'badge-danger' : 'badge-warning'}`} style={{ padding: '0.5rem 1rem' }}>
-                                {app.status === 'pending' ? 'Pendiente' : app.status === 'confirmed' ? 'Confirmada' : 'Cancelada'}
-                              </span>
-                            </td>
-                            <td style={{ textAlign: 'right', paddingRight: '2rem' }}>
-                              <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                                <button onClick={() => deleteAppointment(app.id)} className="btn-icon" style={{ color: 'var(--danger)', background: 'rgba(239, 68, 68, 0.1)', boxShadow: 'none', width: 36, height: 36 }} title="Eliminar">
-                                  <Trash2 size={16} />
-                                </button>
-                              </div>
-                            </td>
-                          </motion.tr>
+                          </tr>
                         ))
                       )}
-                    </AnimatePresence>
-                  </tbody>
-                </table>
+                    </tbody>
+                  </table>
+                </div>
+
+              ) : viewMode === 'timeline' ? (
+                <div className="timeline-grid">
+                  {nowLineX !== null && <div className="now-line" style={{ left: nowLineX }} />}
+                  <div className="timeline-header-cell" style={{ left: 0, zIndex: 100 }}>DÍA / HORA</div>
+                  {HOURS.map(h => (
+                    <React.Fragment key={h}>
+                      <div className="timeline-header-cell">{h}:00</div>
+                      <div className="timeline-header-cell">{h}:30</div>
+                    </React.Fragment>
+                  ))}
+                  {DAYS.map((day, dIdx) => {
+                    const dayApps = appointments.filter(a => {
+                      const d = new Date(a.date + 'T00:00:00').getDay();
+                      return (d === 0 ? 6 : d - 1) === dIdx;
+                    });
+                    const leveled = computeLevels(dayApps);
+                    const maxLevel = leveled.length ? Math.max(...leveled.map(a => a.level)) : 0;
+                    const rowH = getRowHeight(maxLevel);
+                    return (
+                      <div key={day} className="timeline-day-row" style={{ minHeight: rowH }}>
+                        <div className="timeline-day-label" style={{ height: rowH }}>{day}</div>
+                        {Array.from({ length: HOURS.length * 2 }).map((_, i) => (
+                          <div key={i} className="timeline-cell" style={{ height: rowH }} />
+                        ))}
+                        {leveled.map(app => {
+                          const pillTop = ROW_PADDING / 2 + app.level * (PILL_H + PILL_GAP);
+                          return (
+                            <div
+                              key={app.id}
+                              className="appointment-pill"
+                              style={{
+                                left: getTimeX(app.time),
+                                top: pillTop,
+                                width: getPillWidth(app.duration),
+                                background: STATUS_COLOR[app.status] || STATUS_COLOR.pending,
+                                opacity: app.status === 'rejected' ? 0.6 : 1,
+                              }}
+                              onClick={() => openEvent(app)}
+                              title={`${app.name} · ${app.time} · ${app.duration || 30}min`}
+                            >
+                              {app.name}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </div>
+
+              ) : (
+                <div style={{ padding: '1rem', height: '100%' }}>
+                  <FullCalendar
+                    plugins={[dayGridPlugin, interactionPlugin]}
+                    initialView="dayGridMonth"
+                    events={appointments.map(a => ({ title: a.name, start: a.date, color: STATUS_COLOR[a.status] || STATUS_COLOR.pending }))}
+                    height="100%"
+                    locale="es"
+                    dateClick={(info) => { setSelectedDate(info.dateStr); setViewMode('day'); }}
+                    headerToolbar={{ left: 'prev,next today', center: 'title', right: '' }}
+                    buttonText={{ today: 'Hoy' }}
+                    titleFormat={{ year: 'numeric', month: 'long' }}
+                    dayMaxEvents={3}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <AnimatePresence>
+          {isRightSidebarOpen && (
+            <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: 420, opacity: 1 }} exit={{ width: 0, opacity: 0 }} className="right-management-sidebar">
+              <div style={{ padding: '2.5rem', minWidth: '420px', display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+                {/* Header */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h2 style={{ fontWeight: 900, fontSize: '1.2rem', margin: 0 }}>{selectedEvent ? 'Gestionar Cita' : 'Nueva Cita'}</h2>
+                  <button onClick={closeSidebar} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--text-muted)', lineHeight: 1, padding: '4px' }}>✕</button>
+                </div>
+
+                {selectedEvent ? (
+                  <>
+                    {/* Patient name + status */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div>
+                        <div style={{ fontSize: '0.58rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '3px' }}>Paciente</div>
+                        <div style={{ fontSize: '1.05rem', fontWeight: 900 }}>{selectedEvent.name}</div>
+                      </div>
+                      <span style={badgeStyle(selectedEvent.status)}>
+                        {selectedEvent.status === 'confirmed' ? 'Confirmada' : selectedEvent.status === 'rejected' ? 'Rechazada' : 'Pendiente'}
+                      </span>
+                    </div>
+
+                    {/* Editable: email */}
+                    <div>
+                      <div style={{ fontSize: '0.58rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '5px' }}>Correo</div>
+                      <input type="email" className="form-control" value={editFields.email} onChange={e => setEditFields(f => ({ ...f, email: e.target.value }))} placeholder="correo@ejemplo.com" style={{ fontSize: '0.88rem' }} />
+                    </div>
+
+                    {/* Editable: phone */}
+                    <div>
+                      <div style={{ fontSize: '0.58rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '5px' }}>Teléfono</div>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <select className="form-control" style={{ width: '100px', flexShrink: 0, fontSize: '0.82rem' }} value={editFields.countryCode} onChange={e => setEditFields(f => ({ ...f, countryCode: e.target.value }))}>
+                          {COUNTRY_CODES.map(c => <option key={c.code + c.flag} value={c.code}>{c.flag} {c.code}</option>)}
+                        </select>
+                        <input type="tel" className="form-control" value={editFields.phone} onChange={e => setEditFields(f => ({ ...f, phone: e.target.value }))} placeholder="8888-8888" style={{ flex: 1, fontSize: '0.88rem' }} />
+                      </div>
+                    </div>
+
+                    {/* Editable: date + time */}
+                    <div>
+                      <div style={{ fontSize: '0.58rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '5px' }}>Fecha y hora</div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
+                        <input
+                          type="date"
+                          className="form-control"
+                          value={editFields.date}
+                          min={todayDateStr()}
+                          onChange={e => {
+                            const d = e.target.value;
+                            const avail = getAvailableSlots(d);
+                            setEditFields(f => ({ ...f, date: d, time: avail.includes(f.time) ? f.time : '' }));
+                          }}
+                          style={{ fontSize: '0.88rem' }}
+                        />
+                        <select className="form-control" value={editFields.time} onChange={e => setEditFields(f => ({ ...f, time: e.target.value }))} style={{ fontSize: '0.88rem' }}>
+                          <option value="">Hora...</option>
+                          {getAvailableSlots(editFields.date).map(t => <option key={t} value={t}>{t}</option>)}
+                        </select>
+                      </div>
+                      {!isDateTimeFuture(editFields.date, editFields.time) && editFields.date && (
+                        <div style={{ marginTop: '6px', fontSize: '0.72rem', color: '#F59E0B', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          ⚠ El horario seleccionado ya pasó. Actualiza la fecha y hora.
+                        </div>
+                      )}
+                    </div>
+
+                    {selectedEvent.service && (
+                      <div style={{ padding: '0.75rem 0.9rem', border: '1px solid var(--border-light)', borderRadius: '10px' }}>
+                        <div style={{ fontSize: '0.58rem', fontWeight: 800, color: 'var(--text-muted)' }}>SERVICIO</div>
+                        <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{selectedEvent.service}</div>
+                      </div>
+                    )}
+
+                    {selectedEvent.description && (
+                      <div style={{ padding: '0.75rem 0.9rem', border: '1px solid var(--border-light)', borderRadius: '10px' }}>
+                        <div style={{ fontSize: '0.58rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '3px' }}>NOTAS</div>
+                        <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>{selectedEvent.description}</div>
+                      </div>
+                    )}
+
+                    {/* Duration selector */}
+                    <div>
+                      <div style={{ fontSize: '0.58rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>Duración de la cita</div>
+                      {/* Quick presets */}
+                      <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.6rem' }}>
+                        {DURATIONS.map(d => (
+                          <button key={d} type="button" className="duration-btn" onClick={() => setEditDuration(d)}
+                            style={{ border: `1.5px solid ${editDuration === d ? 'var(--primary)' : 'var(--border-light)'}`, background: editDuration === d ? 'var(--primary)' : 'transparent', color: editDuration === d ? 'white' : 'var(--text-main)' }}>
+                            {d}m
+                          </button>
+                        ))}
+                      </div>
+                      {/* Stepper for custom values */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <button type="button" onClick={() => setEditDuration(d => Math.max(30, d - 30))}
+                          style={{ width: 34, height: 34, border: '1px solid var(--border-light)', borderRadius: 8, background: 'transparent', cursor: 'pointer', fontWeight: 900, fontSize: '1.1rem', lineHeight: 1 }}>−</button>
+                        <span style={{ fontWeight: 900, fontSize: '1rem', minWidth: 72, textAlign: 'center', letterSpacing: '-0.02em' }}>{editDuration} min</span>
+                        <button type="button" onClick={() => setEditDuration(d => Math.min(480, d + 30))}
+                          style={{ width: 34, height: 34, border: '1px solid var(--border-light)', borderRadius: 8, background: 'transparent', cursor: 'pointer', fontWeight: 900, fontSize: '1.1rem', lineHeight: 1 }}>+</button>
+                        {editDuration > 120 && <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>personalizado</span>}
+                      </div>
+                    </div>
+
+                    {/* Actions / confirm dialog */}
+                    {(() => {
+                      const isValid = isDateTimeFuture(editFields.date, editFields.time);
+                      const status = selectedEvent.status;
+                      const primaryLabel = status === 'confirmed' ? 'MODIFICAR' : status === 'rejected' ? 'REAGENDAR' : 'APROBAR';
+                      return confirm ? (
+                        <div className="confirm-box">
+                          <div style={{ fontWeight: 700, fontSize: '0.88rem', marginBottom: '0.75rem' }}>
+                            ¿Confirmar rechazo de esta cita?
+                          </div>
+                          <div style={{ display: 'flex', gap: '0.75rem' }}>
+                            <button className="btn" style={{ flex: 1, background: '#F59E0B', color: 'white', border: 'none' }} onClick={handleConfirmAction}>
+                              Sí, rechazar
+                            </button>
+                            <button className="btn" style={{ flex: 1 }} onClick={() => setConfirm(null)}>Cancelar</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ display: 'flex', gap: '0.75rem' }}>
+                          <button
+                            className="btn btn-primary"
+                            style={{ flex: 1, opacity: isValid ? 1 : 0.45, cursor: isValid ? 'pointer' : 'not-allowed' }}
+                            onClick={isValid ? handleApprove : undefined}
+                            title={!isValid ? 'Actualiza la fecha y hora antes de continuar' : ''}
+                          >
+                            {primaryLabel}
+                          </button>
+                          {status !== 'rejected' && (
+                            <button
+                              className="btn"
+                              style={{ flex: 1, color: '#F59E0B', background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.2)' }}
+                              onClick={() => setConfirm({ type: 'reject' })}
+                            >
+                              RECHAZAR
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </>
+                ) : (
+                  /* New appointment form */
+                  <form onSubmit={(e) => {
+                    e.preventDefault();
+                    addAppointment({ ...newForm, status: 'pending', duration: 30 });
+                    setNewForm({ name: '', email: '', phone: '', countryCode: '+506', service: SPECIALTIES[0], date: '', time: '', description: '' });
+                    closeSidebar();
+                  }} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
+                    <input className="form-control" placeholder="Nombre completo" required value={newForm.name} onChange={e => setNewForm(f => ({ ...f, name: e.target.value }))} />
+                    <input type="email" className="form-control" placeholder="Correo electrónico" value={newForm.email} onChange={e => setNewForm(f => ({ ...f, email: e.target.value }))} />
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <select className="form-control" style={{ width: '110px', flexShrink: 0 }} value={newForm.countryCode} onChange={e => setNewForm(f => ({ ...f, countryCode: e.target.value }))}>
+                        {COUNTRY_CODES.map(c => <option key={c.code + c.flag} value={c.code}>{c.flag} {c.code}</option>)}
+                      </select>
+                      <input type="tel" className="form-control" placeholder="8888-8888" value={newForm.phone} onChange={e => setNewForm(f => ({ ...f, phone: e.target.value }))} style={{ flex: 1 }} />
+                    </div>
+                    <select className="form-control" value={newForm.service} onChange={e => setNewForm(f => ({ ...f, service: e.target.value }))}>
+                      {SPECIALTIES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                      <input
+                        type="date"
+                        className="form-control"
+                        required
+                        value={newForm.date}
+                        min={todayDateStr()}
+                        onChange={e => {
+                          const d = e.target.value;
+                          const avail = getAvailableSlots(d);
+                          setNewForm(f => ({ ...f, date: d, time: avail.includes(f.time) ? f.time : '' }));
+                        }}
+                      />
+                      <select className="form-control" required value={newForm.time} onChange={e => setNewForm(f => ({ ...f, time: e.target.value }))}>
+                        <option value="">Hora...</option>
+                        {getAvailableSlots(newForm.date).map(t => <option key={t} value={t}>{t}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <textarea
+                        className="form-control"
+                        placeholder="Detalles adicionales..."
+                        rows={2}
+                        value={newForm.description}
+                        onChange={e => setNewForm(f => ({ ...f, description: e.target.value }))}
+                        style={{ resize: 'none' }}
+                      />
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '4px', paddingLeft: '2px' }}>Opcional</div>
+                    </div>
+                    <button type="submit" className="btn btn-primary" style={{ padding: '1rem', marginTop: '0.25rem' }}>GUARDAR CITA</button>
+                  </form>
+                )}
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* ── ULTRA PREMIUM EVENT MODAL ── */}
-        <AnimatePresence>
-          {selectedEvent && (
-            <div style={{
-              position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-              background: 'rgba(30, 41, 59, 0.6)', zIndex: 9999,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              backdropFilter: 'blur(8px)'
-            }} onClick={() => setSelectedEvent(null)}>
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                style={{
-                  background: 'var(--bg-card)', padding: '0', borderRadius: 'var(--radius-card)',
-                  width: '100%', maxWidth: '480px', boxShadow: '0 24px 48px rgba(0,0,0,0.2)',
-                  position: 'relative', overflow: 'hidden'
-                }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Header Banner - Siguiendo la paleta de colores principal */}
-                <div style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #81C1E9 100%)', padding: '2.5rem 2rem 4rem', color: 'white', position: 'relative' }}>
-                  <button className="btn-icon" onClick={() => setSelectedEvent(null)} style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'rgba(255,255,255,0.2)', color: 'white', boxShadow: 'none', width: 36, height: 36, backdropFilter: 'blur(4px)' }}>
-                    <X size={18} />
-                  </button>
-                  <h3 style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: '0.5rem' }}>Detalle de Cita</h3>
-                  <div style={{ opacity: 0.9, fontSize: '0.95rem', fontWeight: 500 }}>Revisión y gestión de paciente.</div>
-                </div>
-
-                {/* Avatar Overlap */}
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-40px', position: 'relative', zIndex: 10 }}>
-                  <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'var(--bg-card)', padding: '6px', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}>
-                    <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 800 }}>
-                      {selectedEvent.name.charAt(0)}
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ padding: '2rem' }}>
-                  <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-                    <div style={{ fontWeight: '800', color: 'var(--text-main)', fontSize: '1.5rem', letterSpacing: '-0.02em' }}>{selectedEvent.name}</div>
-                    <div style={{ color: 'var(--text-muted)', fontSize: '0.95rem', fontWeight: 500, marginTop: '4px' }}>{selectedEvent.email} • {selectedEvent.phone}</div>
-                  </div>
-
-                  <div style={{ background: 'var(--bg-input)', borderRadius: 'var(--radius-md)', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '2.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(71, 161, 215, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                         <Activity size={18} />
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Especialidad</div>
-                        <div style={{ fontWeight: 800, color: 'var(--text-main)', fontSize: '1.05rem' }}>{selectedEvent.service}</div>
-                      </div>
-                    </div>
-                    
-                    <div style={{ height: '1px', background: 'var(--border-light)' }}></div>
-                    
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(71, 161, 215, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                         <CalendarIcon size={18} />
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Fecha y Hora Programada</div>
-                        <div style={{ fontWeight: 800, color: 'var(--text-main)', fontSize: '1.05rem' }}>{selectedEvent.date} a las {selectedEvent.time}</div>
-                      </div>
-                    </div>
-
-                    <div style={{ height: '1px', background: 'var(--border-light)' }}></div>
-                    
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(71, 161, 215, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                         <Shield size={18} />
-                      </div>
-                      <div style={{ display: 'flex', flex: 1, justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Estado Actual</div>
-                        <span className={`badge ${selectedEvent.status === 'confirmed' ? 'badge-success' : selectedEvent.status === 'cancelled' ? 'badge-danger' : 'badge-warning'}`} style={{ fontSize: '0.85rem', padding: '0.4rem 1rem' }}>
-                          {selectedEvent.status === 'pending' ? 'PENDIENTE' : selectedEvent.status === 'confirmed' ? 'CONFIRMADA' : 'CANCELADA'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {isAdmin && (
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                      {selectedEvent.status !== 'confirmed' && (
-                        <button 
-                          className="btn btn-primary" 
-                          style={{ flex: 1, background: 'var(--success)', boxShadow: '0 8px 24px rgba(16, 185, 129, 0.3)', padding: '1rem' }}
-                          onClick={() => { 
-                            updateAppointment(selectedEvent.id, { status: 'confirmed' }); 
-                            setSelectedEvent({...selectedEvent, status: 'confirmed'}); 
-                          }}
-                        >
-                          <Check size={18} /> Aprobar Cita
-                        </button>
-                      )}
-                      {selectedEvent.status !== 'cancelled' && (
-                        <button 
-                          className="btn" 
-                          style={{ flex: 1, background: 'var(--bg-input)', color: 'var(--danger)', fontWeight: 700, padding: '1rem' }}
-                          onClick={() => { 
-                            updateAppointment(selectedEvent.id, { status: 'cancelled' }); 
-                            setSelectedEvent({...selectedEvent, status: 'cancelled'}); 
-                          }}
-                        >
-                          <X size={18} /> Cancelar Cita
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
-
-        {/* ── SLIDE OVER SIDEBAR (NUEVA CITA MANUAL) ── */}
-        {createPortal(
-          <AnimatePresence>
-            {isSidebarOpen && (
-              <>
-                <motion.div 
-                  initial={{ x: '100%', opacity: 0.5 }} 
-                  animate={{ x: 0, opacity: 1 }} 
-                  exit={{ x: '100%', opacity: 0.5 }}
-                  transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                  className="sidebar-panel"
-                >
-                  <div style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #81C1E9 100%)', padding: '2rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Agendar Nueva Cita</h3>
-                    <button type="button" className="btn-icon" onClick={() => setIsSidebarOpen(false)} style={{ background: 'rgba(255,255,255,0.2)', color: 'white', width: 36, height: 36, backdropFilter: 'blur(4px)' }}>
-                      <X size={18} />
-                    </button>
-                  </div>
-                  
-                  <div style={{ padding: '2rem', flex: 1 }}>
-                    <form onSubmit={handleAddAppointment}>
-                      <div className="form-group">
-                        <label>Nombre del Paciente *</label>
-                        <input type="text" className="form-control" required value={newAppForm.name} onChange={(e) => setNewAppForm({...newAppForm, name: e.target.value})} placeholder="Ej. Carlos Mendoza" />
-                      </div>
-                      <div className="grid-2">
-                        <div className="form-group">
-                          <label>Teléfono</label>
-                          <input type="tel" className="form-control" value={newAppForm.phone} onChange={(e) => setNewAppForm({...newAppForm, phone: e.target.value})} placeholder="8888-8888" />
-                        </div>
-                        <div className="form-group">
-                          <label>Correo Electrónico</label>
-                          <input type="email" className="form-control" value={newAppForm.email} onChange={(e) => setNewAppForm({...newAppForm, email: e.target.value})} placeholder="correo@ejemplo.com" />
-                        </div>
-                      </div>
-                      <div className="form-group">
-                        <label>Especialidad Médica *</label>
-                        <select className="form-control" required value={newAppForm.service} onChange={(e) => setNewAppForm({...newAppForm, service: e.target.value})} style={{ appearance: 'none' }}>
-                          <option value="Limpieza Dental">Limpieza Dental</option>
-                          <option value="Ortodoncia">Ortodoncia</option>
-                          <option value="Blanqueamiento">Blanqueamiento</option>
-                          <option value="Extracción">Extracción</option>
-                          <option value="Revisión General">Revisión General</option>
-                        </select>
-                      </div>
-                      <div className="grid-2">
-                        <div className="form-group">
-                          <label>Fecha *</label>
-                          <input type="date" className="form-control" required value={newAppForm.date} onChange={(e) => setNewAppForm({...newAppForm, date: e.target.value})} />
-                        </div>
-                        <div className="form-group">
-                          <label>Hora *</label>
-                          <input type="time" className="form-control" required value={newAppForm.time} onChange={(e) => setNewAppForm({...newAppForm, time: e.target.value})} />
-                        </div>
-                      </div>
-                      
-                      <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem', padding: '1rem', fontSize: '1.05rem' }}>
-                        Guardar y Agendar
-                      </button>
-                    </form>
-                  </div>
-                </motion.div>
-              </>
-            )}
-          </AnimatePresence>,
-          document.body
-        )}
-
-      </section>
+      </div>
     </div>
   );
 }

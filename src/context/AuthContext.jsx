@@ -19,28 +19,17 @@ export function AuthProvider({ children }) {
     setLoading(false);
   }, []);
 
-  const login = (email, password) => {
-    // Admin mock
-    if (email === 'admin@clinica.com' && password === 'admin123') {
-      const userData = { email, role: 'admin', name: 'Administrador' };
-      setUser(userData);
-      localStorage.setItem('dental_user', JSON.stringify(userData));
-      return true;
-    }
-
-    // Patient mock (check in local storage for registered users)
-    const users = JSON.parse(localStorage.getItem('dental_registered_users') || '[]');
-    const patient = users.find(u => u.email === email && u.password === password);
-    
-    if (patient) {
-      const userData = { ...patient, role: 'patient' };
-      delete userData.password; // Don't store password in state
-      setUser(userData);
-      localStorage.setItem('dental_user', JSON.stringify(userData));
-      return true;
-    }
-
-    return false;
+  const login = (username, password) => {
+    // Fake login: allow any credentials
+    const userData = { 
+      email: `${username}@clinica.com`, 
+      username: username || 'admin', 
+      role: 'admin', 
+      name: username || 'Administrador' 
+    };
+    setUser(userData);
+    localStorage.setItem('dental_user', JSON.stringify(userData));
+    return true;
   };
 
   const register = (name, email, password) => {
