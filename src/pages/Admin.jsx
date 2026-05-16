@@ -179,7 +179,7 @@ export default function Admin() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [newForm, setNewForm] = useState({ name: '', email: '', phone: '', countryCode: '+506', service: SPECIALTIES[0], date: '', time: '', description: '' });
   const [editDuration, setEditDuration] = useState(30);
-  const [editFields, setEditFields] = useState({ email: '', phone: '', countryCode: '+506', date: '', time: '' });
+  const [editFields, setEditFields] = useState({ email: '', phone: '', countryCode: '+506', date: '', time: '', service: SPECIALTIES[0], description: '' });
   const [confirm, setConfirm] = useState(null); // { type: 'reject' | 'delete' }
 
   useEffect(() => {
@@ -221,7 +221,7 @@ export default function Admin() {
   const openEvent = (app) => {
     setSelectedEvent(app);
     setEditDuration(app.duration || 30);
-    setEditFields({ email: app.email || '', phone: app.phone || '', countryCode: app.countryCode || '+506', date: app.date || '', time: app.time || '' });
+    setEditFields({ email: app.email || '', phone: app.phone || '', countryCode: app.countryCode || '+506', date: app.date || '', time: app.time || '', service: app.service || SPECIALTIES[0], description: app.description || '' });
     setConfirm(null);
     setIsRightSidebarOpen(true);
   };
@@ -334,7 +334,7 @@ export default function Admin() {
                             <td>{app.time}{app.duration && app.duration !== 30 ? ` · ${app.duration}min` : ''}</td>
                             <td><span style={badgeStyle(app.status)}>{app.status === 'confirmed' ? 'Confirmada' : app.status === 'rejected' ? 'Rechazada' : 'Pendiente'}</span></td>
                             <td style={{ textAlign: 'right' }}>
-                              <button onClick={() => openEvent(app)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary)', fontWeight: 800, fontSize: '1rem', padding: '0.25rem 0.5rem', lineHeight: 1 }} title="Gestionar">→</button>
+                              <button onClick={() => openEvent(app)} style={{ background: 'var(--primary)', border: 'none', borderRadius: '8px', cursor: 'pointer', color: 'white', fontWeight: 800, fontSize: '0.68rem', padding: '0.4rem 0.85rem', letterSpacing: '0.04em' }}>Gestionar</button>
                             </td>
                           </tr>
                         ))
@@ -480,19 +480,19 @@ export default function Admin() {
                       )}
                     </div>
 
-                    {selectedEvent.service && (
-                      <div style={{ padding: '0.75rem 0.9rem', border: '1px solid var(--border-light)', borderRadius: '10px' }}>
-                        <div style={{ fontSize: '0.58rem', fontWeight: 800, color: 'var(--text-muted)' }}>SERVICIO</div>
-                        <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{selectedEvent.service}</div>
-                      </div>
-                    )}
+                    {/* Editable: service */}
+                    <div>
+                      <div style={{ fontSize: '0.58rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '5px' }}>Servicio</div>
+                      <select className="form-control" value={editFields.service} onChange={e => setEditFields(f => ({ ...f, service: e.target.value }))} style={{ fontSize: '0.88rem' }}>
+                        {SPECIALTIES.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </div>
 
-                    {selectedEvent.description && (
-                      <div style={{ padding: '0.75rem 0.9rem', border: '1px solid var(--border-light)', borderRadius: '10px' }}>
-                        <div style={{ fontSize: '0.58rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '3px' }}>NOTAS</div>
-                        <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>{selectedEvent.description}</div>
-                      </div>
-                    )}
+                    {/* Editable: notes */}
+                    <div>
+                      <div style={{ fontSize: '0.58rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '5px' }}>Notas <span style={{ fontWeight: 400, textTransform: 'none' }}>(opcional)</span></div>
+                      <textarea className="form-control" rows={2} value={editFields.description} onChange={e => setEditFields(f => ({ ...f, description: e.target.value }))} placeholder="Detalles adicionales..." style={{ fontSize: '0.85rem', resize: 'none' }} />
+                    </div>
 
                     {/* Duration selector */}
                     <div>
