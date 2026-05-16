@@ -547,3 +547,21 @@ table tr:last-child td {
 /* ── Mobile Optimization (STRICTLY ISOLATED) ────────────────── */
 /* All mobile styling will be handled by dedicated mobile components using inline styles or Tailwind-like utility classes we defined above. */
 
+/* ── Infinite marquee carousel ─────────────────────────────── */
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+.marquee-track {
+  animation: marquee-left 28s linear infinite;
+  will-change: transform;
+}
+.marquee-track-reverse {
+  animation: marquee-right 32s linear infinite;
+  will-change: transform;
+}
+

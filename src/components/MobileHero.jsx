@@ -1,98 +1,139 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Phone } from 'lucide-react';
 
 const HERO_IMAGE = "/assets/hero-luxury.png";
 const WHATSAPP_LINK = "https://wa.me/50625562673";
 
 export default function MobileHero() {
   return (
-    <section className="block lg:hidden" style={{ width: '100vw', padding: '0', margin: '0', overflow: 'hidden' }}>
-      <div style={{ position: 'relative', width: '100%', height: '80vh', display: 'flex', flexDirection: 'column' }}>
-        
-        {/* Background Image full-bleed */}
-        <img 
-          src={HERO_IMAGE} 
-          alt="Clínica Dental Turrialba" 
-          style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, zIndex: -1 }} 
+    <section className="block lg:hidden" style={{ width: '100%', padding: 0, margin: 0, overflow: 'hidden' }}>
+      <div style={{ position: 'relative', width: '100%', height: '92vh', minHeight: '580px', overflow: 'hidden' }}>
+
+        {/* Background image — no z-index tricks, just normal stacking */}
+        <img
+          src={HERO_IMAGE}
+          alt="Turrialba Dental Care"
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%',
+            objectFit: 'cover', objectPosition: 'center top',
+          }}
         />
-        
-        {/* Gradient Overlay for Text Readability */}
+
+        {/* Gradient overlay */}
         <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%)',
-          zIndex: -1
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.92) 100%)',
         }} />
 
-        {/* Content pushed to the bottom */}
-        <div style={{ marginTop: 'auto', padding: '2rem 1.5rem', zIndex: 1 }}>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <div style={{
-              display: 'inline-block',
-              background: 'rgba(255,255,255,0.2)',
-              backdropFilter: 'blur(8px)',
-              padding: '0.4rem 1rem',
-              borderRadius: '100px',
+        {/* Top badge */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            position: 'absolute', top: '1.75rem', left: '1.5rem',
+            display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+            background: 'rgba(255,255,255,0.15)',
+            backdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255,255,255,0.25)',
+            borderRadius: '100px',
+            padding: '0.4rem 1rem',
+            color: 'white',
+            fontSize: '0.72rem',
+            fontWeight: 700,
+            letterSpacing: '0.05em',
+          }}
+        >
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#4ade80', display: 'inline-block' }} />
+          Turrialba Dental Care
+        </motion.div>
+
+        {/* Bottom content */}
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          padding: '2rem 1.5rem 2.5rem',
+        }}>
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 0.1 }}
+          >
+            <p style={{
+              fontSize: '0.72rem', fontWeight: 800,
+              color: 'rgba(255,255,255,0.6)',
+              textTransform: 'uppercase', letterSpacing: '0.1em',
+              marginBottom: '0.75rem',
+            }}>
+              Laboratorio Propio · Horario Nocturno
+            </p>
+
+            <h1 style={{
+              fontSize: 'clamp(2.4rem, 8vw, 3.2rem)',
+              fontWeight: 800, lineHeight: 1.08,
               color: 'white',
-              fontSize: '0.8rem',
-              fontWeight: 700,
+              letterSpacing: '-0.03em',
               marginBottom: '1rem',
-              border: '1px solid rgba(255,255,255,0.3)'
             }}>
-              Laboratorio Propio
-            </div>
-            
-            <h1 style={{ 
-              fontSize: '2.8rem', 
-              fontWeight: 800, 
-              lineHeight: 1.1, 
-              color: 'white', 
-              letterSpacing: '-0.02em', 
-              marginBottom: '1rem' 
-            }}>
-              Más que una sonrisa, <br />
-              <span style={{ 
-                fontFamily: 'var(--font-serif)', 
-                fontStyle: 'italic', 
-                fontWeight: 600, 
-                color: 'var(--accent)' 
+              Más que una sonrisa,{' '}
+              <span style={{
+                fontFamily: 'var(--font-serif)',
+                fontStyle: 'italic',
+                fontWeight: 600,
+                color: 'var(--accent)',
               }}>
                 bienestar total.
               </span>
             </h1>
-            
-            <p style={{ 
-              fontSize: '1rem', 
-              color: 'rgba(255,255,255,0.9)', 
-              marginBottom: '2rem', 
+
+            <p style={{
+              fontSize: '0.95rem',
+              color: 'rgba(255,255,255,0.75)',
+              marginBottom: '2rem',
               fontWeight: 500,
-              lineHeight: 1.5
+              lineHeight: 1.55,
+              maxWidth: '340px',
             }}>
-              Resultados inmediatos con el trato humano que mereces en Turrialba.
+              Especialistas certificados con resultados inmediatos y el trato humano que mereces.
             </p>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-              <Link to="/booking" className="btn btn-primary" style={{ padding: '1rem', fontSize: '1rem', width: '100%', justifyContent: 'center' }}>
+
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <Link
+                to="/booking"
+                style={{
+                  flex: 1,
+                  textAlign: 'center',
+                  padding: '0.95rem 1rem',
+                  background: 'var(--primary)',
+                  color: 'white',
+                  borderRadius: '14px',
+                  fontWeight: 800,
+                  fontSize: '0.9rem',
+                  textDecoration: 'none',
+                  letterSpacing: '0.01em',
+                }}
+              >
                 Agendar Cita
               </Link>
-              <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer" className="btn" style={{ 
-                padding: '1rem', 
-                fontSize: '1rem', 
-                background: 'rgba(255,255,255,0.1)', 
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255,255,255,0.3)', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '0.5rem', 
-                color: 'white', 
-                fontWeight: 700,
-                justifyContent: 'center'
-              }}>
-                <Phone size={18} /> WhatsApp
+              <a
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  flex: 1,
+                  textAlign: 'center',
+                  padding: '0.95rem 1rem',
+                  background: 'rgba(255,255,255,0.12)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255,255,255,0.25)',
+                  color: 'white',
+                  borderRadius: '14px',
+                  fontWeight: 800,
+                  fontSize: '0.9rem',
+                  textDecoration: 'none',
+                }}
+              >
+                WhatsApp
               </a>
             </div>
           </motion.div>

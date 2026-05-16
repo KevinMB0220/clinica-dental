@@ -118,52 +118,75 @@ export default function Home() {
       </section>
 
       {/* ── 2. TRUST BANNER ── */}
-      <section style={{ padding: '2rem 0', background: 'white', borderTop: '1px solid var(--border-light)', borderBottom: '1px solid var(--border-light)' }}>
+      <motion.section
+        initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
+        style={{ padding: '2rem 0', background: 'white', borderTop: '1px solid var(--border-light)', borderBottom: '1px solid var(--border-light)' }}
+      >
         <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: '4rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-            <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-main)' }}>Horario Nocturno hasta 8:00 PM</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-            <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-main)' }}>Reparaciones Inmediatas</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-            <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-main)' }}>Atención Infantil</span>
-          </div>
+          {['Horario Nocturno hasta 8:00 PM', 'Reparaciones Inmediatas', 'Atención Infantil'].map((text, i) => (
+            <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.1 }} style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--primary)', display: 'inline-block', flexShrink: 0 }} />
+              <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-main)' }}>{text}</span>
+            </motion.div>
+          ))}
         </div>
-      </section>
+      </motion.section>
 
       {/* ── 3. CARRUSEL AUTOMÁTICO ── */}
-      <section id="clinica" style={{ padding: '6rem 0', overflow: 'hidden' }}>
-        <div className="section-title" style={{ textAlign: 'center', marginBottom: '5rem' }}>
+      <motion.section
+        id="clinica"
+        initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
+        style={{ padding: '6rem 0', overflow: 'hidden' }}
+      >
+        <motion.div
+          className="section-title"
+          initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55 }}
+          style={{ textAlign: 'center', marginBottom: '5rem' }}
+        >
           <h2>Nuestras Instalaciones</h2>
-        </div>
-        <div style={{ width: '100%', overflow: 'hidden', position: 'relative' }}>
-          <motion.div style={{ display: 'flex', gap: '2rem', width: 'max-content' }} animate={{ x: [0, -1000] }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }}>
-            {infiniteGallery.map((item, i) => (
-              <div key={i} style={{ width: '480px', height: '340px', position: 'relative', flexShrink: 0 }}>
+        </motion.div>
+        {/* Carousel: items use marginRight instead of gap so -50% translateX is exact */}
+        <div style={{ width: '100%', overflow: 'hidden', position: 'relative',
+          WebkitMaskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)' }}>
+          <div className="marquee-track" style={{ display: 'flex', width: 'max-content' }}>
+            {[...infiniteGallery, ...infiniteGallery].map((item, i) => (
+              <div key={i} style={{ width: '480px', height: '340px', position: 'relative', flexShrink: 0, marginRight: '2rem' }}>
                 <img src={item.img} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-card)' }} />
                 <div style={{ position: 'absolute', bottom: '1.5rem', left: '1.5rem', background: 'rgba(255,255,255,0.95)', padding: '0.6rem 1.2rem', borderRadius: 'var(--radius-pill)', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', backdropFilter: 'blur(8px)', boxShadow: 'var(--shadow-card)' }}>
                   {item.title}
                 </div>
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ── 4. SERVICIOS (BENTO GRID RESTORED) ── */}
       <section id="servicios" className="bg-soft" style={{ padding: '8rem 0' }}>
         <div className="container">
-          <div className="section-title" style={{ textAlign: 'center' }}>
+          <motion.div
+            className="section-title"
+            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55 }}
+            style={{ textAlign: 'center' }}
+          >
             <h2>Especialidades Médicas</h2>
-          </div>
+          </motion.div>
           <div className="services-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gridAutoRows: 'minmax(240px, auto)', gap: '1.25rem' }}>
             {specialties.map((service, index) => {
               let gridSpan = 'span 2';
               if (index === 0) gridSpan = 'span 4';
               if (index === 5 || index === 6) gridSpan = 'span 3';
               return (
-                <motion.div key={index} className="dashboard-card" style={{ padding: '2.5rem', border: '1px solid var(--border-light)', cursor: 'pointer', gridColumn: gridSpan, display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative' }} whileHover={{ borderColor: 'var(--primary)', translateY: -5, boxShadow: 'var(--shadow-hover)' }}>
+                <motion.div
+                  key={index}
+                  className="dashboard-card"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.45, delay: index * 0.07 }}
+                  whileHover={{ borderColor: 'var(--primary)', translateY: -5, boxShadow: 'var(--shadow-hover)' }}
+                  style={{ padding: '2.5rem', border: '1px solid var(--border-light)', cursor: 'pointer', gridColumn: gridSpan, display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative' }}
+                >
                   <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
                     <div style={{ width: '4px', height: '32px', background: 'var(--primary)', borderRadius: 'var(--radius-pill)', flexShrink: 0, marginTop: '4px' }}></div>
                     <div>
@@ -180,16 +203,29 @@ export default function Home() {
 
       {/* ── 5. EQUIPO ── */}
       <section id="equipo" className="container dashboard-section">
-        <div className="section-title" style={{ textAlign: 'center' }}>
+        <motion.div
+          className="section-title"
+          initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55 }}
+          style={{ textAlign: 'center' }}
+        >
           <h2>Nuestro Equipo Médico</h2>
-        </div>
+        </motion.div>
         <div className="team-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2.5rem' }}>
           {[
             { name: 'Dra. Sharlene Torres', role: 'Ortodoncia', detail: 'Directora', img: HERO_IMAGE },
             { name: 'Dra. Sofía Chacón', role: 'General', detail: 'Horario Nocturno', img: HERO_IMAGE },
             { name: 'Dra. Alina Quesada', role: 'Niños', detail: 'Especialista', img: HERO_IMAGE },
           ].map((doc, i) => (
-            <motion.div key={i} className="dashboard-card" style={{ padding: '0', overflow: 'hidden', border: '1px solid var(--border-light)' }} whileHover={{ translateY: -10, boxShadow: 'var(--shadow-hover)' }}>
+            <motion.div
+              key={i}
+              className="dashboard-card"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.12 }}
+              whileHover={{ translateY: -10, boxShadow: 'var(--shadow-hover)' }}
+              style={{ padding: '0', overflow: 'hidden', border: '1px solid var(--border-light)' }}
+            >
               <div style={{ width: '100%', height: '380px', position: 'relative' }}>
                 <img src={doc.img} alt={doc.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'var(--bg-card)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary)', boxShadow: 'var(--shadow-card)' }}>
