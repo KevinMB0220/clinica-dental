@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&display=swap');
 
 /* ── Design Tokens (Dashboard Style) ─────────────────────── */
 :root {
@@ -18,6 +18,8 @@
   --text-inverse:  #FFFFFF;
   
   --border-light:  #E2E8F0;
+  
+  --font-serif:    'Cormorant Garamond', serif;
 
   /* Shadows - Super Soft "Floating" Effect */
   --shadow-card:   0 12px 32px rgba(30, 41, 59, 0.05), 0 2px 8px rgba(30, 41, 59, 0.02);
@@ -88,12 +90,31 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 2rem;
 }
 .section-title h2 {
-  font-size: 1.75rem;
-  margin-bottom: 0.5rem;
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.04em;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 1.5rem;
+}
+.section-title h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 4px;
+  background: var(--primary);
+  border-radius: var(--radius-pill);
 }
 .section-title p {
   color: var(--text-muted);
-  font-size: 1rem;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  margin-top: 1.5rem;
 }
 
 /* ── Buttons (Pill Style) ────────────────────────────────── */
@@ -156,9 +177,12 @@ nav {
   height: 90px;
   display: flex;
   align-items: center;
-  background: transparent;
-  position: relative;
+  background: rgba(253, 253, 255, 0.8); /* Semi-transparent base */
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
   z-index: 1000;
+  border-bottom: 1px solid rgba(71, 161, 215, 0.05);
 }
 
 .logo {
@@ -178,25 +202,41 @@ nav {
 
 .nav-links {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.25rem;
   list-style: none;
+  background: var(--bg-card);
+  padding: 0.4rem;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(71, 161, 215, 0.05);
 }
 .nav-link-item {
+  position: relative; /* For the animated pill background */
   font-weight: 600;
   color: var(--text-muted);
   text-decoration: none;
-  padding: 0.6rem 1.2rem;
+  padding: 0.7rem 1.4rem;
   border-radius: var(--radius-pill);
-  transition: var(--transition);
+  transition: color 0.25s ease;
+  font-size: 0.9rem;
+  display: block;
+  z-index: 1;
 }
 .nav-link-item:hover {
   color: var(--text-main);
-  background: rgba(255,255,255,0.5);
 }
 .nav-link-active {
-  background: var(--primary) !important;
   color: var(--text-inverse) !important;
+}
+
+/* The sliding indicator styled in CSS but animated by Framer */
+.nav-pill-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--primary);
+  border-radius: var(--radius-pill);
   box-shadow: var(--shadow-btn);
+  z-index: -1;
 }
 
 /* ── Form Controls ───────────────────────────────────────── */

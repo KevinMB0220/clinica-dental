@@ -1,248 +1,229 @@
 import { motion } from 'framer-motion';
-import { Shield, Star, Clock, Users, ChevronRight, Phone, Sparkles, Activity, Zap, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Shield, Star, Clock, Users, ChevronRight, Phone, Sparkles, Activity, Zap, HeartPulse, MapPin, Facebook, Instagram, Calendar } from 'lucide-react';
 
-const services = [
-  { title: 'Odontología General',           description: 'Atención primaria, diagnóstico, limpiezas y tratamientos preventivos básicos para toda la familia.', icon: <Sparkles size={28} /> },
-  { title: 'Ortodoncia',                    description: 'Diagnostica, previene y corrige los dientes mal alineados y problemas de maloclusión con tecnología avanzada.', icon: <Activity size={28} /> },
-  { title: 'Periodoncia',                   description: 'Se enfoca en la salud de las encías y los tejidos de soporte del diente para prevenir enfermedades.', icon: <Shield size={28} /> },
-  { title: 'Endodoncia',                    description: 'Trata las enfermedades de la pulpa dental y los conductos radiculares mediante tratamientos precisos.', icon: <Zap size={28} /> },
-  { title: 'Cirugía Oral y Maxilofacial',   description: 'Maneja extracciones complejas, implantes y cirugías reconstructivas de la boca y mandíbula.', icon: <Shield size={28} /> },
-  { title: 'Odontopediatría',               description: 'Especialidad dedicada exclusivamente a la atención dental de niños y adolescentes.', icon: <Users size={28} /> },
-  { title: 'Rehabilitación Oral',           description: 'Especializada en diseñar y colocar prótesis, coronas y puentes para devolver la función dental.', icon: <Star size={28} /> },
+const WHATSAPP_NUMBER = "50625562673";
+const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}`;
+
+// IMAGEN GENERADA DE ALTA RESOLUCIÓN
+const HERO_IMAGE = "/assets/hero-luxury.png";
+
+const servicesList = [
+  "Ortodoncia", "Implantes", "Endodoncia", "Odontopediatría", "Periodoncia", "Quiropodia", 
+  "Estética Dental", "Limpieza Profunda", "Cirugía", "Laboratorio Propio", "Prótesis Inmediata",
+  "Blanqueamiento", "Rayos X", "Diseño de Sonrisa", "Coronas", "Carillas"
+];
+
+// Duplicate for marquee effect
+const marqueeRow1 = [...servicesList];
+const marqueeRow2 = [...servicesList].reverse();
+
+const galleryItems = [
+  { title: 'Consultorio Digital', img: '/assets/hero-dental.jpg' },
+  { title: 'Laboratorio de Prótesis', img: '/assets/happy-patient.jpg' },
+  { title: 'Área de Ortodoncia', img: '/assets/hero-dental.jpg' },
+  { title: 'Sala de Espera VIP', img: '/assets/happy-patient.jpg' },
+  { title: 'Tecnología 3D', img: '/assets/hero-dental.jpg' },
+];
+
+const infiniteGallery = [...galleryItems, ...galleryItems];
+
+const specialties = [
+  { title: 'Ortodoncia Especializada', description: 'Dirigido por la Dra. Sharlene Torres, corregimos alineación y mordida con las técnicas más modernas.' },
+  { title: 'Implantes Dentales', description: 'Restauramos la funcionalidad y estética de tu sonrisa con especialistas en implantología.' },
+  { title: 'Endodoncia (Nervio)', description: 'Especialistas en tratamientos de conductos para salvar piezas dentales y eliminar el dolor.' },
+  { title: 'Odontopediatría', description: 'Atención infantil a cargo de la Dra. Alina Quesada, en un ambiente amigable y seguro.' },
+  { title: 'Periodoncia', description: 'Cuidado especializado de las encías y los tejidos de soporte para una salud bucal integral.' },
+  { title: 'Quiropodia (Nuevo)', description: 'Servicio de atención integral de los pies: callos, uñas encarnadas y cuidado general.' },
+  { title: 'Laboratorio Propio', description: 'Técnico dental en planta para reparaciones de prótesis y coronas inmediatas.' },
 ];
 
 export default function Home() {
   return (
-    <div className="home-page" style={{ paddingBottom: '6rem' }}>
+    <div className="home-page">
+      
+      {/* ── 1. HERO SECTION (ULTRA-WIDE LATTICE CLONE) ── */}
+      <section style={{ height: 'calc(100vh - 90px)', display: 'flex', flexDirection: 'column', padding: '1rem 0' }} id="home">
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '1rem', width: '100%', padding: '0 5%' }}>
+          
+          {/* TOP INFO (35%) */}
+          <div style={{ flex: '0 0 35%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+              <h1 style={{ fontSize: 'clamp(2.5rem, 4.5vw, 4.2rem)', fontWeight: 700, lineHeight: 1.1, color: 'var(--text-main)', letterSpacing: '-0.02em', marginBottom: '1.5rem' }}>
+              Más que una sonrisa, <br />
+              <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 600, color: 'var(--primary)', position: 'relative', display: 'inline-block', marginTop: '0.5rem', fontSize: '1.1em' }}>
+                tu bienestar total.
+              </span>
+            </h1>
+              <p style={{ fontSize: '1rem', color: 'var(--text-muted)', maxWidth: '540px', margin: '0 auto 1.5rem', fontWeight: 500 }}>
+                Especialistas certificados y laboratorio propio en Turrialba para resultados inmediatos con un trato humano inigualable.
+              </p>
+              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                <Link to="/booking" className="btn btn-primary" style={{ padding: '0.9rem 2rem', fontSize: '0.95rem' }}>
+                  Agendar Cita
+                </Link>
+                <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer" className="btn" style={{ padding: '0.9rem 2rem', fontSize: '0.95rem', background: 'white', border: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-main)', fontWeight: 700 }}>
+                  <Phone size={16} color="var(--primary)" /> WhatsApp
+                </a>
+              </div>
+            </motion.div>
+          </div>
 
-      {/* ── HERO SECTION: DYNAMIC MOSAIC (Un diseño totalmente nuevo y disruptivo) ── */}
-      <section style={{ position: 'relative', overflow: 'hidden', padding: '8rem 0 4rem' }}>
-        <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '2rem', alignItems: 'center' }}>
+          {/* BOTTOM IMAGE (65%) */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.99 }} 
+            animate={{ opacity: 1, scale: 1 }} 
+            transition={{ duration: 0.8, delay: 0.2 }}
+            style={{ flex: '1', position: 'relative', borderRadius: '40px', overflow: 'hidden', boxShadow: '0 25px 60px rgba(0,0,0,0.12)' }}
+          >
+            {/* NUEVA IMAGEN 8K */}
+            <img src={HERO_IMAGE} alt="Clínica Turrialba Dental" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             
-            {/* Contenido Principal de Texto */}
-            <div style={{ gridColumn: '1 / span 6', position: 'relative', zIndex: 10 }}>
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              >
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-card)', padding: '0.6rem 1.2rem', borderRadius: 'var(--radius-pill)', boxShadow: 'var(--shadow-card)', marginBottom: '2.5rem', fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                  <Sparkles size={16} fill="var(--primary)" /> Redefiniendo la Clínica Dental
-                </div>
-                
-                <h1 style={{ fontSize: 'clamp(3rem, 6vw, 5rem)', fontWeight: 800, lineHeight: 0.95, marginBottom: '2rem', color: 'var(--text-main)', letterSpacing: '-0.05em' }}>
-                  Más que una sonrisa, <br />
-                  <span style={{ color: 'var(--primary)' }}>tu bienestar.</span>
-                </h1>
-                
-                <p style={{ fontSize: '1.25rem', color: 'var(--text-muted)', marginBottom: '3rem', lineHeight: 1.6, maxWidth: '500px' }}>
-                  Combinamos arte clínico con la tecnología más avanzada del país para crear experiencias dentales sin estrés y resultados permanentes.
-                </p>
-                
-                <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-                  <Link to="/booking" className="btn btn-primary" style={{ padding: '1.2rem 2.5rem', fontSize: '1.1rem' }}>
-                    Agendar Evaluación <ChevronRight size={20} style={{ marginLeft: '4px' }} />
-                  </Link>
-                  <a href="#servicios" style={{ color: 'var(--text-main)', fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem' }} className="hover-lift">
-                    Explorar Especialidades <ChevronRight size={18} />
-                  </a>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Mosaico Visual Dinámico */}
-            <div style={{ gridColumn: '7 / span 6', position: 'relative', height: '600px' }}>
-              
-              {/* Imagen Principal (Vertical) */}
-              <motion.div 
-                style={{ position: 'absolute', top: '0', right: '10%', width: '65%', height: '80%', zIndex: 2 }}
-                initial={{ opacity: 0, y: 100 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.2 }}
-              >
-                <img 
-                  src="/assets/hero-dental.jpg" 
-                  alt="Modern Clinic" 
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-hover)' }} 
-                />
-              </motion.div>
-
-              {/* Imagen Secundaria (Horizontal) */}
-              <motion.div 
-                style={{ position: 'absolute', bottom: '5%', left: '0', width: '55%', height: '45%', zIndex: 3 }}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-              >
-                <img 
-                  src="/assets/happy-patient.jpg" 
-                  alt="Happy Patient" 
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-hover)', border: '8px solid var(--bg-card)' }} 
-                />
-              </motion.div>
-
-              {/* Floating Stat Card 1 */}
-              <motion.div 
-                className="dashboard-card"
-                style={{ position: 'absolute', top: '15%', left: '10%', zIndex: 4, padding: '1.5rem', minWidth: '180px' }}
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.8 }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <CheckCircle2 size={18} color="var(--success)" />
-                  </div>
-                  <span style={{ fontWeight: 700, color: 'var(--success)' }}>Verificado</span>
-                </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Tecnología 3D de Vanguardia</div>
-              </motion.div>
-
-              {/* Floating Stat Card 2 */}
-              <motion.div 
-                className="dashboard-card"
-                style={{ position: 'absolute', bottom: '25%', right: '0', zIndex: 4, padding: '1.25rem', background: 'var(--primary)', color: 'white' }}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 1 }}
-              >
-                <div style={{ fontSize: '1.5rem', fontWeight: 800 }}>4.9 ★</div>
-                <div style={{ fontSize: '0.7rem', opacity: 0.8, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Google Reviews</div>
-              </motion.div>
-
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ── 2. TRUST BANNER: MINIMALISTA ── */}
-      <section style={{ padding: '2rem 0', background: 'rgba(255,255,255,0.4)', borderTop: '1px solid var(--border-light)', borderBottom: '1px solid var(--border-light)' }}>
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '3rem' }}>
-          <span style={{ color: 'var(--text-muted)', fontWeight: 700, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Reconocidos por la excelencia técnica</span>
-          <div style={{ display: 'flex', gap: '4rem', alignItems: 'center', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: 'var(--primary)' }}></div>
-              <span style={{ fontWeight: 600 }}>15+ Años de Historia</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: 'var(--primary)' }}></div>
-              <span style={{ fontWeight: 600 }}>Especialistas Certificados</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: 'var(--primary)' }}></div>
-              <span style={{ fontWeight: 600 }}>Protocolos de Bioseguridad</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 3. SERVICIOS: GRID MODERNO ── */}
-      <section id="servicios" className="bg-soft" style={{ marginBottom: '4rem' }}>
-        <div className="container dashboard-section">
-          <div className="section-title">
-            <h2 style={{ fontSize: '2.5rem' }}>Especialidades Dentales</h2>
-            <p style={{ maxWidth: '600px', margin: '0 auto' }}>Ofrecemos soluciones integrales bajo un mismo techo con los estándares clínicos más exigentes.</p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
-            {services.map((service, index) => (
-              <motion.div
-                key={index}
-                className="dashboard-card"
-                style={{ padding: '3rem', border: '1px solid transparent', cursor: 'pointer' }}
-                whileHover={{ borderColor: 'var(--primary)', translateY: -10 }}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-              >
-                <div className="btn-icon" style={{ width: '56px', height: '56px', color: 'var(--primary)', background: 'rgba(71, 161, 215, 0.05)', marginBottom: '1.5rem' }}>
-                  {service.icon}
-                </div>
-                <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>{service.title}</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: 1.6 }}>{service.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 4. FEATURE FOCUS: ZIG-ZAG REFINED ── */}
-      <section className="container dashboard-section">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8rem' }}>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'center' }}>
-            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-               <h2 style={{ fontSize: '2.5rem', marginBottom: '1.5rem' }}>Gestión del tiempo <br /><span style={{ color: 'var(--primary)' }}>sin esperas.</span></h2>
-               <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', lineHeight: 1.7, marginBottom: '2rem' }}>
-                 Sabemos que tu tiempo es lo más valioso. Por eso, hemos optimizado cada proceso clínico para garantizar que tu cita comience exactamente cuando fue programada. Sin filas, sin demoras, solo eficiencia.
+            {/* Overlay: Bottom Left Info (Static) */}
+            <div style={{ position: 'absolute', bottom: '3rem', left: '3rem', textAlign: 'left', maxWidth: '380px', zIndex: 10 }}>
+               <h2 style={{ color: 'white', fontSize: '2.5rem', fontWeight: 900, lineHeight: 1.1, marginBottom: '0.75rem', textShadow: '0 2px 15px rgba(0,0,0,0.4)' }}>
+                 Laboratorio <br /> Propio.
+               </h2>
+               <p style={{ color: 'white', fontSize: '1rem', fontWeight: 600, textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
+                 Tecnología dental inmediata <br /> a tu alcance en Turrialba.
                </p>
-               <div className="dashboard-card" style={{ padding: '1.5rem', background: 'var(--bg-input)', display: 'inline-flex', alignItems: 'center', gap: '1rem' }}>
-                  <Clock size={20} color="var(--primary)" />
-                  <span style={{ fontWeight: 700 }}>Promedio de espera: 8 minutos</span>
-               </div>
-            </motion.div>
-            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-              <img src="/assets/happy-patient.jpg" alt="Efficiency" style={{ width: '100%', height: '400px', objectFit: 'cover', borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-card)' }} />
-            </motion.div>
-          </div>
+            </div>
 
+            {/* Overlay: LARGE TRANSPARENT CAROUSEL (White Pills) */}
+            <div style={{ position: 'absolute', bottom: '3rem', right: '3rem', left: '35%', background: 'transparent', padding: '0', overflow: 'hidden' }}>
+               
+               {/* Fade Effect Container */}
+               <div style={{ position: 'relative', width: '100%', WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}>
+                  
+                  {/* Row 1 */}
+                  <motion.div 
+                    style={{ display: 'flex', gap: '2.5rem', marginBottom: '1.25rem', width: 'max-content' }}
+                    animate={{ x: [0, -1200] }}
+                    transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                  >
+                    {marqueeRow1.map((s, i) => (
+                      <div key={i} style={{ padding: '0.6rem 1.8rem', background: 'rgba(255,255,255,0.98)', borderRadius: 'var(--radius-pill)', fontSize: '0.9rem', fontWeight: 800, whiteSpace: 'nowrap', color: 'var(--text-main)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}>
+                        {s}
+                      </div>
+                    ))}
+                  </motion.div>
+
+                  {/* Row 2 */}
+                  <motion.div 
+                    style={{ display: 'flex', gap: '2.5rem', width: 'max-content' }}
+                    animate={{ x: [-1200, 0] }}
+                    transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                  >
+                    {marqueeRow2.map((s, i) => (
+                      <div key={i} style={{ padding: '0.6rem 1.8rem', background: 'rgba(255,255,255,0.98)', borderRadius: 'var(--radius-pill)', fontSize: '0.9rem', fontWeight: 800, whiteSpace: 'nowrap', color: 'var(--text-main)', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}>
+                        {s}
+                      </div>
+                    ))}
+                  </motion.div>
+               </div>
+            </div>
+
+          </motion.div>
         </div>
       </section>
 
-      {/* ── 5. TESTIMONIALS ── */}
-      <section className="bg-soft">
-        <div className="container dashboard-section">
-          <div className="section-title">
-            <h2 style={{ fontSize: '2.5rem' }}>Voces de nuestros pacientes</h2>
+      {/* ── 2. TRUST BANNER ── */}
+      <section style={{ padding: '2rem 0', background: 'white', borderTop: '1px solid var(--border-light)', borderBottom: '1px solid var(--border-light)' }}>
+        <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: '4rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+            <Clock size={18} color="var(--primary)" />
+            <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-main)' }}>Horario Nocturno hasta 8:00 PM</span>
           </div>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-            {[
-              { name: 'María García',    text: 'La mejor experiencia dental que he tenido. El personal es increíblemente amable y profesional. Me explicaron cada paso de mi tratamiento.',  role: 'Paciente de Ortodoncia'     },
-              { name: 'Juan Pérez',      text: 'Tecnología de primer nivel. Mi blanqueamiento quedó perfecto en una sola sesión. Altamente recomendado para quienes buscan calidad.',     role: 'Paciente de Blanqueamiento' },
-              { name: 'Elena Rodríguez', text: 'Excelente trato con los niños. Mis hijos ya no tienen miedo de ir al dentista gracias a la paciencia de la doctora Salas.',                 role: 'Madre de Familia'           },
-            ].map((t, i) => (
-              <motion.div
-                key={i}
-                className="dashboard-card"
-                style={{ padding: '3rem', position: 'relative' }}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <div style={{ color: '#F59E0B', marginBottom: '1.5rem', display: 'flex', gap: '2px' }}>
-                  {[...Array(5)].map((_, j) => <Star key={j} size={18} fill="currentColor" />)}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+            <Zap size={18} color="var(--primary)" />
+            <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-main)' }}>Reparaciones Inmediatas</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+            <Users size={18} color="var(--primary)" />
+            <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-main)' }}>Atención Infantil</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 3. CARRUSEL AUTOMÁTICO (Instalaciones) ── */}
+      <section id="clinica" style={{ padding: '6rem 0', overflow: 'hidden' }}>
+        <div className="section-title" style={{ textAlign: 'center', marginBottom: '5rem' }}>
+          <h2>Nuestras Instalaciones</h2>
+        </div>
+        <div style={{ width: '100%', overflow: 'hidden', position: 'relative' }}>
+          <motion.div style={{ display: 'flex', gap: '2rem', width: 'max-content' }} animate={{ x: [0, -1000] }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }}>
+            {infiniteGallery.map((item, i) => (
+              <div key={i} style={{ width: '480px', height: '340px', position: 'relative', flexShrink: 0 }}>
+                <img src={item.img} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-card)' }} />
+                <div style={{ position: 'absolute', bottom: '1.5rem', left: '1.5rem', background: 'rgba(255,255,255,0.95)', padding: '0.6rem 1.2rem', borderRadius: 'var(--radius-pill)', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', backdropFilter: 'blur(8px)', boxShadow: 'var(--shadow-card)' }}>
+                  {item.title}
                 </div>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: 1.8, fontSize: '1rem', fontStyle: 'italic' }}>"{t.text}"</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>
-                    {t.name.charAt(0)}
-                  </div>
-                  <div>
-                    <h4 style={{ fontSize: '0.95rem', fontWeight: 700 }}>{t.name}</h4>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>{t.role}</span>
-                  </div>
-                </div>
-              </motion.div>
+              </div>
             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── 4. SERVICIOS (Bento Grid) ── */}
+      <section id="servicios" className="bg-soft" style={{ padding: '8rem 0' }}>
+        <div className="container">
+          <div className="section-title" style={{ textAlign: 'center' }}>
+            <h2>Especialidades Médicas</h2>
+            <p style={{ maxWidth: '600px', margin: '1.5rem auto 0' }}>Equipada con tecnología moderna y un equipo de especialistas dedicados a cada área de la odontología.</p>
           </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gridAutoRows: 'minmax(240px, auto)', gap: '1.25rem' }}>
+            {specialties.map((service, index) => {
+              let gridSpan = 'span 2';
+              if (index === 0) gridSpan = 'span 4';
+              if (index === 5 || index === 6) gridSpan = 'span 3';
+              return (
+                <motion.div key={index} className="dashboard-card" style={{ padding: '2.5rem', border: '1px solid var(--border-light)', cursor: 'pointer', gridColumn: gridSpan, display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', transition: 'border-color 0.3s ease' }} whileHover={{ borderColor: 'var(--primary)', translateY: -5, boxShadow: 'var(--shadow-hover)' }} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }}>
+                  <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
+                    <div style={{ width: '4px', height: '32px', background: 'var(--primary)', borderRadius: 'var(--radius-pill)', flexShrink: 0, marginTop: '4px', opacity: 0.8 }}></div>
+                    <div>
+                      <h3 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '1rem', color: 'var(--text-main)', lineHeight: 1.2 }}>{service.title}</h3>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: 1.6 }}>{service.description}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 5. MEET THE DOCTORS ── */}
+      <section id="equipo" className="container dashboard-section">
+        <div className="section-title" style={{ textAlign: 'center' }}>
+          <h2>Nuestro Equipo Médico</h2>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2.5rem' }}>
+          {[
+            { name: 'Dra. Sharlene Torres', role: 'Especialista en Ortodoncia', detail: 'Directora Médica', img: '/assets/hero-dental.jpg', desc: 'Directora y fundadora, experta en alineación y estética dental de alta precisión.' },
+            { name: 'Dra. Sofía Chacón', role: 'Odontología General', detail: 'Horario Extendido', img: '/assets/happy-patient.jpg', desc: 'Especialista en atención integral con disponibilidad en horario nocturno (5pm - 8pm).' },
+            { name: 'Dra. Alina Quesada', role: 'Odontopediatría', detail: 'Especialista Infantil', img: '/assets/hero-dental.jpg', desc: 'Atención dental infantil con un enfoque paciente, lúdico y altamente profesional.' },
+          ].map((doc, i) => (
+            <motion.div key={i} className="dashboard-card" style={{ padding: '0', overflow: 'hidden', border: '1px solid var(--border-light)' }} whileHover={{ translateY: -10, boxShadow: 'var(--shadow-hover)', borderColor: 'var(--primary)' }} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
+              <div style={{ width: '100%', height: '380px', position: 'relative' }}>
+                <img src={doc.img} alt={doc.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'var(--bg-card)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary)', boxShadow: 'var(--shadow-card)', backdropFilter: 'blur(4px)' }}>
+                  {doc.detail}
+                </div>
+              </div>
+              <div style={{ padding: '2.5rem' }}>
+                <h4 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-main)' }}>{doc.name}</h4>
+                <div style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.95rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ width: '12px', height: '2px', background: 'var(--primary)' }}></div> {doc.role}
+                </div>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: 1.7 }}>{doc.desc}</p>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </section>
 
       {/* WhatsApp Flotante */}
-      <a
-        href="https://wa.me/50689281259"
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{ position: 'fixed', bottom: '2rem', right: '2rem', backgroundColor: '#10B981', color: 'white', width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 32px rgba(16, 185, 129, 0.4)', zIndex: 1000, transition: 'transform 0.2s' }}
-        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
-        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-      >
+      <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" style={{ position: 'fixed', bottom: '2rem', right: '2rem', backgroundColor: '#10B981', color: 'white', width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 32px rgba(16, 185, 129, 0.4)', zIndex: 1000, transition: 'transform 0.2s' }}>
         <Phone size={30} />
       </a>
     </div>
