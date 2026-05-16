@@ -1,30 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&display=swap');
 
-/* ── Design Tokens (Dashboard Style) ─────────────────────── */
+/* ── Design Tokens (Turrialba Dental Green Palette) ────────── */
 :root {
-  /* Colors - Dashboard Palette */
-  --bg-page:       linear-gradient(135deg, #EAEAF4 0%, #D8DFE8 100%);
+  /* Colors - Official Brand Palette */
+  --bg-page:       linear-gradient(135deg, #F0F9F1 0%, #FFFFFF 100%);
   --bg-card:       #FFFFFF;
-  --bg-input:      #F4F5F7;
+  --bg-input:      #F1F8F2;
   
-  --primary:       #47A1D7; /* Muted, Professional Celeste (Not loud) */
-  --primary-hover: #3689B8;
+  --primary:       #29A643; /* Verde Principal de la imagen */
+  --primary-hover: #1E8534;
+  --primary-light: #E8F5E9;
   
-  --success:       #10B981;
+  --accent:        #B6D641; /* Verde Lima del diente sonriente */
+  
+  --success:       #29A643;
   --danger:        #EF4444;
   
-  --text-main:     #1E293B; /* Dark slate */
-  --text-muted:    #64748B;
+  --text-main:     #1A3020; /* Verde muy oscuro para texto */
+  --text-muted:    #5A7060;
   --text-inverse:  #FFFFFF;
   
-  --border-light:  #E2E8F0;
+  --border-light:  #E1EDE3;
   
   --font-serif:    'Cormorant Garamond', serif;
 
-  /* Shadows - Super Soft "Floating" Effect */
-  --shadow-card:   0 12px 32px rgba(30, 41, 59, 0.05), 0 2px 8px rgba(30, 41, 59, 0.02);
-  --shadow-btn:    0 6px 16px rgba(71, 161, 215, 0.25);
-  --shadow-hover:  0 16px 40px rgba(30, 41, 59, 0.08), 0 4px 12px rgba(30, 41, 59, 0.03);
+  /* Shadows - Tinted with green */
+  --shadow-card:   0 12px 32px rgba(41, 166, 67, 0.05), 0 2px 8px rgba(41, 166, 67, 0.02);
+  --shadow-btn:    0 6px 16px rgba(41, 166, 67, 0.2);
+  --shadow-hover:  0 16px 40px rgba(41, 166, 67, 0.08), 0 4px 12px rgba(41, 166, 67, 0.03);
 
   /* Radii - Extremely Rounded */
   --radius-sm:     8px;

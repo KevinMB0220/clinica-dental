@@ -94,9 +94,9 @@ export default function Navbar() {
                <button onClick={logout} style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>Salir</button>
             </div>
           )}
-          <a href="https://wa.me/50625562673" target="_blank" rel="noreferrer" className="btn btn-primary" style={{ padding: '0.7rem 1.4rem', fontSize: '0.85rem' }}>
+          <Link to="/booking" className="btn btn-primary" style={{ padding: '0.7rem 1.4rem', fontSize: '0.85rem' }}>
             Agendar cita
-          </a>
+          </Link>
         </div>
       </div>
     </nav>
