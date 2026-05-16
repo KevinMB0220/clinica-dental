@@ -273,7 +273,7 @@ export default function Admin() {
 
       <header className="admin-header-premium">
         <div style={{ flex: '0 0 auto' }}>
-          <div style={{ fontSize: '0.55rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '3px' }}>Dental Turrialba · Panel de Control</div>
+          <div style={{ fontSize: '0.55rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '3px' }}>Turrialba Dental Care · Panel de Control</div>
           <div style={{ fontSize: '2rem', fontWeight: 900, letterSpacing: '-0.05em', lineHeight: 1, color: 'var(--text-main)' }}>
             {now.toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit', hour12: false })}
           </div>
@@ -428,7 +428,10 @@ export default function Admin() {
                     dateClick={(info) => { setSelectedDate(info.dateStr); setViewMode('day'); }}
                     headerToolbar={{ left: 'prev,next today', center: 'title', right: '' }}
                     buttonText={{ today: 'Hoy' }}
-                    titleFormat={{ year: 'numeric', month: 'long' }}
+                    titleFormat={(info) => {
+                      const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+                      return `${months[info.date.month]} ${info.date.year}`;
+                    }}
                     dayMaxEvents={3}
                   />
                 </div>
