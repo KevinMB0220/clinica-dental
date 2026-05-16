@@ -79,6 +79,43 @@ const getAvailableSlots = (dateStr) => {
   return TIME_SLOTS.filter(s => parseTimeToMinutes(s) >= minMinutes);
 };
 
+const FIXED_HOLIDAYS = {
+  '01-01': '🥂', '02-14': '🌹', '03-08': '🌸', '04-11': '⚔️',
+  '05-01': '⚒️', '07-25': '🌺', '08-02': '🕊️', '08-15': '💐',
+  '09-15': '🇨🇷', '10-12': '🌎', '10-31': '🎃', '12-01': '☮️',
+  '12-24': '✨', '12-25': '🎄', '12-31': '🎉',
+};
+
+const getEaster = (year) => {
+  const a = year % 19, b = Math.floor(year / 100), c = year % 100;
+  const d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31);
+  const day = ((h + l - 7 * m + 114) % 31) + 1;
+  return new Date(year, month - 1, day);
+};
+
+const getDiaDelPadre = (year) => {
+  const d = new Date(year, 5, 1);
+  const firstSun = d.getDay() === 0 ? 1 : 8 - d.getDay();
+  return new Date(year, 5, firstSun + 14);
+};
+
+const getHolidayEmoji = (date) => {
+  const mmdd = `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  if (FIXED_HOLIDAYS[mmdd]) return FIXED_HOLIDAYS[mmdd];
+  const year = date.getFullYear();
+  const easter = getEaster(year);
+  const goodFriday = new Date(easter);
+  goodFriday.setDate(goodFriday.getDate() - 2);
+  if (date.getMonth() === goodFriday.getMonth() && date.getDate() === goodFriday.getDate()) return '✝️';
+  const padre = getDiaDelPadre(year);
+  if (date.getMonth() === padre.getMonth() && date.getDate() === padre.getDate()) return '👔';
+  return null;
+};
+
 // Returns true if a date+time combination is in the valid bookable future (>= now + 30 min)
 const isDateTimeFuture = (dateStr, timeStr) => {
   if (!dateStr) return false;
@@ -329,9 +366,23 @@ export default function Admin() {
 
               {viewMode === 'day' ? (
                 <div style={{ padding: '2rem' }}>
-                  <h3 style={{ fontWeight: 900, marginBottom: '1.5rem' }}>
-                    {activeDayStr === todayStr ? `Agenda de Hoy — ${activeDayStr}` : `Agenda — ${activeDayStr}`}
-                  </h3>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                    <h3 style={{ fontWeight: 900, margin: 0 }}>
+                      {activeDayStr === todayStr ? `Agenda de Hoy — ${activeDayStr}` : `Agenda — ${activeDayStr}`}
+                    </h3>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => {
+                        setSelectedEvent(null);
+                        setConfirm(null);
+                        setNewForm(f => ({ ...f, date: activeDayStr, time: '' }));
+                        setIsRightSidebarOpen(true);
+                      }}
+                      style={{ fontSize: '0.72rem', padding: '0.55rem 1.2rem' }}
+                    >
+                      + Agendar para este día
+                    </button>
+                  </div>
                   <table className="day-table">
                     <thead>
                       <tr>
@@ -433,6 +484,15 @@ export default function Admin() {
                       return `${months[info.date.month]} ${info.date.year}`;
                     }}
                     dayMaxEvents={3}
+                    dayCellContent={(arg) => {
+                      const emoji = getHolidayEmoji(arg.date);
+                      return (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0 0.4rem' }}>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)' }}>{arg.dayNumberText}</span>
+                          {emoji && <span style={{ fontSize: '0.85rem', lineHeight: 1, opacity: 0.8 }}>{emoji}</span>}
+                        </div>
+                      );
+                    }}
                   />
                 </div>
               )}
