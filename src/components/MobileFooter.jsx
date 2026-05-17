@@ -20,13 +20,17 @@ export default function MobileFooter() {
       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', opacity: 0.7 }}>
         © {new Date().getFullYear()} Turrialba Dental Care. {t('footer.copyright')}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginTop: '1.5rem' }}>
+      <nav aria-label="Documentos legales" style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginTop: '1.5rem' }}>
         <Link to="/privacidad" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textDecoration: 'none' }}>{t('footer.privacy')}</Link>
-        <span style={{ color: 'var(--text-muted)', opacity: 0.3 }}>|</span>
+        <span aria-hidden="true" style={{ color: 'var(--text-muted)', opacity: 0.3 }}>|</span>
         <Link to="/terminos" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textDecoration: 'none' }}>{t('footer.terms')}</Link>
-        <span style={{ color: 'var(--text-muted)', opacity: 0.3 }}>|</span>
+        <span aria-hidden="true" style={{ color: 'var(--text-muted)', opacity: 0.3 }}>|</span>
+        <Link to="/cookies" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textDecoration: 'none' }}>{t('footer.cookies')}</Link>
+        <span aria-hidden="true" style={{ color: 'var(--text-muted)', opacity: 0.3 }}>|</span>
+        <Link to="/accesibilidad" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textDecoration: 'none' }}>{t('footer.accessibility')}</Link>
+        <span aria-hidden="true" style={{ color: 'var(--text-muted)', opacity: 0.3 }}>|</span>
         <Link to="/login" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textDecoration: 'none', opacity: 0.6 }}>{t('footer.adminAccess')}</Link>
-      </div>
+      </nav>
     </footer>
   );
 }

@@ -36,13 +36,13 @@
     "desktopTitle": "Medical Specialties",
     "subtitle": "Complete dental specialties all in one place.",
     "items": {
-      "orthodontics": { "title": "Specialized Orthodontics", "desc": "Alignment & bite correction", "description": "Led by Dr. Sharlene Torres, we correct alignment and bite using the most modern techniques." },
-      "implants": { "title": "Dental Implants", "desc": "Aesthetic restoration", "description": "We restore the functionality and aesthetics of your smile with implantology specialists." },
-      "endodontics": { "title": "Endodontics (Root Canal)", "desc": "Root canal treatments", "description": "Specialists in root canal treatments to save dental pieces and eliminate pain." },
-      "pediatric": { "title": "Pediatric Dentistry", "desc": "Children's care", "description": "Children's care by Dr. Alina Quesada, in a friendly and safe environment." },
-      "periodontics": { "title": "Periodontics", "desc": "Gum care", "description": "Specialized care of gums and supporting tissues for comprehensive oral health." },
-      "chiropody": { "title": "Chiropody (New)", "desc": "Foot care", "description": "Comprehensive foot care service: calluses, ingrown nails and general care." },
-      "lab": { "title": "In-House Lab", "desc": "Immediate repairs", "description": "On-site dental technician for immediate prosthetics and crown repairs." }
+      "orthodontics": { "title": "Specialized Orthodontics", "desc": "Alignment & bite correction", "description": "Dental alignment with conventional and aesthetic brackets. Our director is an orthodontics specialist with direct in-clinic care." },
+      "implants": { "title": "Dental Implants", "desc": "Aesthetic restoration", "description": "Permanent dental implants to replace missing teeth. Procedure performed by an implantology specialist." },
+      "endodontics": { "title": "Endodontics (Root Canal)", "desc": "Root canal treatments", "description": "Root canal treatment to save dental pieces affected by infections or deep cavities." },
+      "pediatric": { "title": "Pediatric Dentistry", "desc": "Children's care", "description": "Specialized dental care for children in a friendly and fear-free environment. Led by Dr. Alina Quesada." },
+      "periodontics": { "title": "Periodontics", "desc": "Gum care", "description": "Diagnosis and treatment of gum diseases and dental support tissue conditions." },
+      "chiropody": { "title": "Chiropody (New)", "desc": "Foot care", "description": "Professional foot care: callus removal, ingrown nail treatment and podological care. Led by Fabiola." },
+      "lab": { "title": "In-House Lab", "desc": "Immediate repairs", "description": "Manufacture of removable and fixed prosthetics. The clinic has its own dental technician — same-day results." }
     }
   },
   "team": {
@@ -73,6 +73,8 @@
     "copyright": "All rights reserved.",
     "privacy": "Privacy Policy",
     "terms": "Terms & Conditions",
+    "cookies": "Cookie Policy",
+    "accessibility": "Accessibility",
     "adminAccess": "Admin Access",
     "mobileSchedule": "Mon - Fri: 8:00 AM - 8:00 PM",
     "mobileLocation": "Turrialba, Cartago"
@@ -116,11 +118,127 @@
     "mobileSending": "Sending...",
     "mobileSuccess": "Appointment Requested!",
     "mobileSuccessDesc": "We'll contact you soon to confirm.",
-    "mobileGoHome": "Go to Home"
+    "mobileGoHome": "Go to Home",
+    "legalNote": "Fields marked with * are required. Your information is handled securely and confidentially.",
+    "checkboxPrivacy": "I have read and accept the Privacy Policy and Terms & Conditions of Turialba Dental. *",
+    "checkboxHealth": "I expressly authorize Turialba Dental to collect and process the health information I provide in this form, solely for the purpose of managing my medical appointment, pursuant to Costa Rica Law N.° 8968. *",
+    "checkboxMarketing": "I agree to receive communications from Turialba Dental about services, reminders and updates. I may withdraw this consent at any time. (Optional)"
   },
   "mobileNav": {
     "home": "Home",
     "book": "Book"
   },
-  "backToTop": "Back to top"
+  "backToTop": "Back to top",
+  "cookies": {
+    "banner": {
+      "ariaLabel": "Cookie notice",
+      "text": "We use essential cookies for the site to function and, with your consent, analytics cookies to improve your experience. You can accept or reject non-essential cookies.",
+      "accept": "Accept",
+      "reject": "Reject",
+      "learnMore": "Learn more"
+    }
+  },
+  "legal": {
+    "lastUpdated": "Last updated",
+    "home": "Home",
+    "relatedLinks": "Related documents",
+    "privacy": {
+      "title": "Privacy Policy",
+      "breadcrumb": "Privacy Policy",
+      "intro": "In compliance with Costa Rica Law N.° 8968 — Personal Data Protection Act and its Executive Regulation (Decree N.° 37554-JP), Turialba Dental, located in Turrialba, Cartago, Costa Rica, informs you about the processing of your personal data.",
+      "s1Title": "1. Data Controller",
+      "s1Rows": [["Trade name", "Turialba Dental"], ["Location", "Turrialba, Cartago, Costa Rica"], ["Phone / WhatsApp", "2556-2673"], ["Email", "info@turialbadental.cr"], ["Website", "www.turialbadental.cr"]],
+      "s2Title": "2. Data We Collect",
+      "s2Id": "Identification data: full name, phone number and email address (optional).",
+      "s2Health": "Health data (special category — requires explicit consent): dental service requested and reason for consultation provided voluntarily.",
+      "s2Tech": "Automatic technical data: IP address, browser and device type, pages visited (only if analytics cookies are accepted).",
+      "s3Title": "3. Purpose of Processing",
+      "s3Intro": "Your data is used exclusively for:",
+      "s3Items": ["(a) Managing and confirming dental appointments.", "(b) Sending appointment reminders and responding to inquiries.", "(c) Marketing communications, only if you expressly authorized them.", "(d) Complying with legal obligations under Costa Rican health and tax law."],
+      "s4Title": "4. Legal Basis",
+      "s4Head": ["Purpose", "Legal basis"],
+      "s4Rows": [["Appointment management", "Service relationship execution (Art. 22, Law 8968)"], ["Health data", "Explicit consent of the data subject (Art. 9, Law 8968)"], ["Marketing", "Voluntary consent of the data subject"], ["Legal obligations", "Compliance with applicable Costa Rican law"]],
+      "s5Title": "5. Recipients",
+      "s5Text": "Your data will not be sold or transferred to third parties for commercial purposes. Only clinic staff directly involved in your care and technology providers under confidentiality agreements may access it.",
+      "s6Title": "6. International Transfers",
+      "s6Text": "If your data is processed by cloud services with servers outside Costa Rica, we ensure those providers meet data protection standards equivalent to Costa Rican legislation.",
+      "s7Title": "7. Data Retention",
+      "s7Text": "Data is retained for as long as necessary to provide the service and as required by applicable health and tax legislation. Marketing data is deleted upon withdrawal of consent.",
+      "s8Title": "8. Your Rights",
+      "s8Intro": "Under Law N.° 8968, you may at any time:",
+      "s8Items": ["Access the data we hold about you.", "Rectify inaccurate or incomplete data.", "Request deletion when data is no longer necessary.", "Object to processing for marketing purposes.", "Portability: receive your data in a readable electronic format."],
+      "s8Contact": "To exercise your rights, contact us at 2556-2673 or info@turialbadental.cr. We respond within a maximum of 5 business days.",
+      "s9Title": "9. Security",
+      "s9Text": "We implement SSL/TLS encryption for all data transmission and organizational measures to protect your information against unauthorized access, loss or alteration.",
+      "s10Title": "10. Minors",
+      "s10Text": "We do not collect data from persons under 18 without the express consent of a parent or legal guardian.",
+      "s11Title": "11. Changes to This Policy",
+      "s11Text": "We will notify significant changes through the website. The Last updated date at the top of this document always reflects the most recent version.",
+      "s12Title": "12. Supervisory Authority",
+      "s12Text": "If you believe your rights have been violated you may contact the Costa Rican Data Protection Agency (PRODHAB): www.prodhab.go.cr — Tel. 2539-6240."
+    },
+    "terms": {
+      "title": "Terms & Conditions",
+      "breadcrumb": "Terms & Conditions",
+      "s1Title": "1. Acceptance",
+      "s1Text": "By accessing and using the Turialba Dental website (www.turialbadental.cr), you accept these Terms. If you disagree, we recommend you do not use the site.",
+      "s2Title": "2. Nature of the Site",
+      "s2Text": "This website is informational and for appointment management. Published information does not replace an in-person consultation with a healthcare professional.",
+      "s3Title": "3. Appointment Requests",
+      "s3Text": "The form generates a request, not an automatic confirmation. The appointment is confirmed when the clinic contacts you. By submitting, you agree to:",
+      "s3Items": ["Provide accurate and complete information.", "Notify us at least 24 hours in advance if you need to cancel or reschedule.", "Attend at the agreed date and time."],
+      "s4Title": "4. Cancellation Policy",
+      "s4Text": "Cancellations less than 24 hours in advance may result in loss of the appointment slot. No-shows without notice may lead to special conditions for rescheduling. Justified emergencies are evaluated individually.",
+      "s5Title": "5. Scope of Medical Information",
+      "s5Text": "Site content is for general information only and does not constitute medical advice, diagnosis or treatment. Always consult a healthcare professional directly.",
+      "s6Title": "6. Intellectual Property",
+      "s6Text": "All site content (texts, images, design, logo) is the property of Turialba Dental or its licensors. Reproduction without prior written authorization is prohibited.",
+      "s7Title": "7. Limitation of Liability",
+      "s7Text": "Turialba Dental is not liable for content errors, service interruptions due to technical causes, or damages arising from unauthorized use of the site.",
+      "s8Title": "8. Privacy",
+      "s8Text": "The processing of personal data is governed by our Privacy Policy, in accordance with Costa Rica Law N.° 8968.",
+      "s9Title": "9. Governing Law and Jurisdiction",
+      "s9Text": "These Terms are governed by the laws of Costa Rica. Any dispute shall be submitted to the courts of the canton of Turrialba, Cartago.",
+      "s10Title": "10. Contact",
+      "s10Text": "Email: info@turialbadental.cr — Tel.: 2556-2673 — Turrialba, Cartago, Costa Rica."
+    },
+    "cookies": {
+      "title": "Cookie Policy",
+      "breadcrumb": "Cookie Policy",
+      "intro": "Cookies are small text files that the site saves on your device to remember preferences and improve the browsing experience.",
+      "tableTitle": "Cookies We Use",
+      "tableHeaders": ["Type", "Tool", "Purpose", "Duration", "Requires consent"],
+      "tableRows": [
+        ["Essential", "Internal session", "Basic site functionality", "Session", "No"],
+        ["Analytics", "Google Analytics", "Measure traffic anonymously", "2 years", "Yes"]
+      ],
+      "managementTitle": "Managing Cookies",
+      "managementText": "When you first visit the site you will see a notice to accept or reject non-essential cookies. You can also manage them from your browser:",
+      "browsers": [
+        ["Chrome", "Settings → Privacy → Cookies"],
+        ["Safari", "Preferences → Privacy"],
+        ["Firefox", "Options → Privacy & Security"]
+      ]
+    },
+    "accessibility": {
+      "title": "Accessibility Statement",
+      "breadcrumb": "Accessibility Statement",
+      "intro": "Turialba Dental is committed to ensuring the accessibility of its website for all people, regardless of their abilities or the device they use.",
+      "standard": "Reference standard: WCAG 2.1 Level AA (Web Content Accessibility Guidelines by W3C).",
+      "measuresTitle": "Measures Implemented",
+      "perception": "Perception",
+      "perceptionItems": ["Minimum color contrast of 4.5:1 for normal text.", "Alternative text on all informative images.", "Animations that respect prefers-reduced-motion.", "No content that flashes more than 3 times per second."],
+      "operability": "Operability",
+      "operabilityItems": ["Full keyboard navigation.", "'Skip to main content' link at the start of each page.", "Logical tab order.", "Visible focus indicator on all interactive elements.", "Minimum 44×44 px touch targets on mobile.", "Zoom up to 200% without content loss."],
+      "understandability": "Understandability",
+      "understandabilityItems": ["Language declared in the HTML code.", "Visible labels on all form fields.", "Clear error messages and required fields indicated.", "Responsive design for any device."],
+      "robustness": "Robustness",
+      "robustnessItems": ["HTML5 semantic structure.", "ARIA roles and attributes correctly implemented.", "Compatible with NVDA, VoiceOver and TalkBack."],
+      "limitationsTitle": "Known Limitations",
+      "limitationsText": "Team photos are currently provisional and will be replaced by professional images soon.",
+      "contactTitle": "Found an accessibility issue?",
+      "contactText": "Contact us — we respond within 5 business days and work on the solution.",
+      "contactInfo": "info@turialbadental.cr — Tel. 2556-2673"
+    }
+  }
 }

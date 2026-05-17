@@ -1,75 +1,65 @@
-import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+
+const H2 = { fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.75rem' };
 
 export default function Terms() {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  const { t } = useTranslation();
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
+  const T = t('legal.terms', { returnObjects: true });
 
   return (
-    <div style={{ background: '#FDFDFF', minHeight: '100vh', paddingTop: '120px', paddingBottom: '4rem' }}>
+    <main id="main-content" tabIndex="-1" style={{ background: '#FDFDFF', minHeight: '100vh', paddingTop: '120px', paddingBottom: '4rem' }}>
       <div className="container" style={{ maxWidth: '800px' }}>
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }}
-          style={{ background: 'white', padding: '3rem', borderRadius: '24px', boxShadow: '0 10px 40px rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.05)' }}
-        >
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '1.5rem', letterSpacing: '-0.03em' }}>Términos y Condiciones</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>Última actualización: 16 de Mayo de 2026</p>
+        <nav aria-label="Miga de pan" style={{ marginBottom: '2rem', fontSize: '0.85rem' }}>
+          <Link to="/" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>{t('legal.home')}</Link>
+          <span style={{ color: 'var(--text-muted)', margin: '0 0.5rem' }}>›</span>
+          <span style={{ color: 'var(--text-muted)' }}>{T.breadcrumb}</span>
+        </nav>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', color: 'var(--text-main)', lineHeight: 1.7 }}>
-            <section>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.75rem' }}>1. Aceptación de los Términos</h2>
-              <p>
-                Al acceder y utilizar el sitio web de Turrialba Dental Care (el "Sitio") y nuestros servicios de agendamiento en línea, usted acepta cumplir y estar sujeto a estos Términos y Condiciones. Si no está de acuerdo con estos términos, le rogamos no utilice nuestra plataforma.
-              </p>
-            </section>
+        <div style={{ background: 'white', padding: '3rem', borderRadius: '24px', boxShadow: '0 10px 40px rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.05)' }}>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '0.5rem', letterSpacing: '-0.03em' }}>{T.title}</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>{t('legal.lastUpdated')}: 17/05/2026</p>
 
-            <section>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.75rem' }}>2. Servicios de Agendamiento</h2>
-              <p>
-                El Sitio ofrece una plataforma para que los pacientes puedan solicitar citas para servicios odontológicos. Tenga en cuenta lo siguiente:
-              </p>
-              <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                <li>La solicitud de cita a través de la web no constituye una confirmación automática. La cita se considera confirmada únicamente cuando nuestro equipo la aprueba y le notifica (por correo electrónico o teléfono).</li>
-                <li>Turrialba Dental Care se reserva el derecho de rechazar, cancelar o reprogramar citas debido a disponibilidad, emergencias médicas o causas de fuerza mayor.</li>
-                <li>Usted se compromete a proporcionar información veraz, actual y completa al momento de llenar el formulario de agendamiento.</li>
+          <div style={{ fontSize: '0.95rem', lineHeight: 1.8, color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+
+            <section aria-labelledby="t1"><h2 id="t1" style={H2}>{T.s1Title}</h2><p>{T.s1Text}</p></section>
+            <section aria-labelledby="t2"><h2 id="t2" style={H2}>{T.s2Title}</h2><p>{T.s2Text}</p></section>
+
+            <section aria-labelledby="t3">
+              <h2 id="t3" style={H2}>{T.s3Title}</h2>
+              <p>{T.s3Text}</p>
+              <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                {T.s3Items.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
             </section>
 
-            <section>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.75rem' }}>3. Políticas de Cancelación y Llegadas Tardías</h2>
-              <p>
-                Entendemos que pueden surgir imprevistos. Sin embargo, solicitamos a nuestros pacientes que cualquier cancelación o reprogramación se realice con al menos <strong>24 horas de anticipación</strong>.
-              </p>
-              <p style={{ marginTop: '0.5rem' }}>
-                Llegar tarde a su cita (más de 15 minutos) podría resultar en la reducción de su tiempo de tratamiento o en la necesidad de reprogramar la cita, dependiendo de la agenda de la clínica, para evitar afectar a los siguientes pacientes.
+            <section aria-labelledby="t4"><h2 id="t4" style={H2}>{T.s4Title}</h2><p>{T.s4Text}</p></section>
+            <section aria-labelledby="t5"><h2 id="t5" style={H2}>{T.s5Title}</h2><p>{T.s5Text}</p></section>
+            <section aria-labelledby="t6"><h2 id="t6" style={H2}>{T.s6Title}</h2><p>{T.s6Text}</p></section>
+            <section aria-labelledby="t7"><h2 id="t7" style={H2}>{T.s7Title}</h2><p>{T.s7Text}</p></section>
+
+            <section aria-labelledby="t8">
+              <h2 id="t8" style={H2}>{T.s8Title}</h2>
+              <p>{T.s8Text.split('Privacy Policy')[0] || T.s8Text.split('Política de Privacidad')[0]}
+                <Link to="/privacy" style={{ color: 'var(--primary)', fontWeight: 600 }}>{t('footer.privacy')}</Link>
+                {T.s8Text.includes('Privacy Policy') ? T.s8Text.split('Privacy Policy')[1] : T.s8Text.split('Política de Privacidad')[1]}
               </p>
             </section>
 
-            <section>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.75rem' }}>4. Responsabilidad Médica e Información del Sitio</h2>
-              <p>
-                El contenido proporcionado en este Sitio (textos, descripciones de servicios, imágenes) tiene fines puramente informativos y educativos. En ningún caso la información del sitio web debe considerarse como diagnóstico médico o sustituir la consulta directa y la evaluación clínica presencial por parte de nuestros odontólogos acreditados.
-              </p>
-            </section>
+            <section aria-labelledby="t9"><h2 id="t9" style={H2}>{T.s9Title}</h2><p>{T.s9Text}</p></section>
+            <section aria-labelledby="t10"><h2 id="t10" style={H2}>{T.s10Title}</h2><p>{T.s10Text}</p></section>
 
-            <section>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.75rem' }}>5. Modificaciones a los Términos</h2>
-              <p>
-                Nos reservamos el derecho de actualizar, modificar o reemplazar cualquier parte de estos Términos y Condiciones mediante la publicación de las actualizaciones en nuestro Sitio. Es su responsabilidad revisar esta página periódicamente para verificar los cambios. El uso continuo del Sitio tras la publicación de cambios constituye la aceptación de los mismos.
-              </p>
-            </section>
-
-            <section>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.75rem' }}>6. Legislación Aplicable</h2>
-              <p>
-                Estos Términos y Condiciones se regirán e interpretarán de acuerdo con las leyes de la República de Costa Rica. Cualquier disputa relacionada con estos términos estará sujeta a la jurisdicción exclusiva de los tribunales de Costa Rica.
-              </p>
-            </section>
+            <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap', fontSize: '0.85rem' }}>
+              <Link to="/privacy" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>{t('footer.privacy')}</Link>
+              <Link to="/cookies" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>{t('footer.cookies')}</Link>
+              <Link to="/accessibility" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>{t('footer.accessibility')}</Link>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

@@ -36,13 +36,13 @@
     "desktopTitle": "Especialidades Médicas",
     "subtitle": "Especialidades médicas completas en un solo lugar.",
     "items": {
-      "orthodontics": { "title": "Ortodoncia Especializada", "desc": "Alineación y mordida", "description": "Dirigido por la Dra. Sharlene Torres, corregimos alineación y mordida con las técnicas más modernas." },
-      "implants": { "title": "Implantes Dentales", "desc": "Restauración estética", "description": "Restauramos la funcionalidad y estética de tu sonrisa con especialistas en implantología." },
-      "endodontics": { "title": "Endodoncia (Nervio)", "desc": "Tratamientos de nervio", "description": "Especialistas en tratamientos de conductos para salvar piezas dentales y eliminar el dolor." },
-      "pediatric": { "title": "Odontopediatría", "desc": "Atención infantil", "description": "Atención infantil a cargo de la Dra. Alina Quesada, en un ambiente amigable y seguro." },
-      "periodontics": { "title": "Periodoncia", "desc": "Cuidado de encías", "description": "Cuidado especializado de las encías y los tejidos de soporte para una salud bucal integral." },
-      "chiropody": { "title": "Quiropodia (Nuevo)", "desc": "Cuidado de pies", "description": "Servicio de atención integral de los pies: callos, uñas encarnadas y cuidado general." },
-      "lab": { "title": "Laboratorio Propio", "desc": "Reparaciones inmediatas", "description": "Técnico dental en planta para reparaciones de prótesis y coronas inmediatas." }
+      "orthodontics": { "title": "Ortodoncia Especializada", "desc": "Alineación y mordida", "description": "Alineación dental con brackets convencionales y opciones estéticas. La doctora directora es especialista en ortodoncia con atención directa en clínica." },
+      "implants": { "title": "Implantes Dentales", "desc": "Restauración estética", "description": "Implantes dentales permanentes para reemplazar piezas perdidas. Procedimiento a cargo de especialista en implantología." },
+      "endodontics": { "title": "Endodoncia (Nervio)", "desc": "Tratamientos de nervio", "description": "Tratamiento de conductos radiculares para salvar piezas dentales afectadas por infecciones o caries profundas." },
+      "pediatric": { "title": "Odontopediatría", "desc": "Atención infantil", "description": "Atención dental especializada para niños en un ambiente amigable y sin miedo. A cargo de la Dra. Alina Quesada." },
+      "periodontics": { "title": "Periodoncia", "desc": "Cuidado de encías", "description": "Diagnóstico y tratamiento de enfermedades de las encías y los tejidos de soporte dental." },
+      "chiropody": { "title": "Quiropodia (Nuevo)", "desc": "Cuidado de pies", "description": "Cuidado profesional de los pies: extracción de callos, tratamiento de uñas encarnadas y atención podológica. A cargo de Fabiola." },
+      "lab": { "title": "Laboratorio Propio", "desc": "Reparaciones inmediatas", "description": "Fabricación de prótesis removibles y fijas. La clínica cuenta con técnico dental propio — resultados el mismo día." }
     }
   },
   "team": {
@@ -73,6 +73,8 @@
     "copyright": "Todos los derechos reservados.",
     "privacy": "Privacidad",
     "terms": "Términos y Condiciones",
+    "cookies": "Política de Cookies",
+    "accessibility": "Accesibilidad",
     "adminAccess": "Acceso Administrativo",
     "mobileSchedule": "Lun - Vie: 8:00 AM - 8:00 PM",
     "mobileLocation": "Turrialba, Cartago"
@@ -116,11 +118,127 @@
     "mobileSending": "Enviando...",
     "mobileSuccess": "¡Cita Solicitada!",
     "mobileSuccessDesc": "Te contactaremos pronto para confirmar.",
-    "mobileGoHome": "Ir al Inicio"
+    "mobileGoHome": "Ir al Inicio",
+    "legalNote": "Los campos marcados con * son requeridos. Su información es tratada de forma segura y confidencial.",
+    "checkboxPrivacy": "He leído y acepto la Política de Privacidad y los Términos y Condiciones de Turialba Dental. *",
+    "checkboxHealth": "Autorizo expresamente a Turialba Dental a recopilar y tratar la información de salud que proporciono en este formulario, con la única finalidad de gestionar mi cita médica, conforme a la Ley N.° 8968 de Costa Rica. *",
+    "checkboxMarketing": "Acepto recibir comunicaciones de Turialba Dental sobre servicios, recordatorios y novedades. Puedo retirar este consentimiento en cualquier momento. (Opcional)"
   },
   "mobileNav": {
     "home": "Inicio",
     "book": "Citas"
   },
-  "backToTop": "Volver arriba"
+  "backToTop": "Volver arriba",
+  "cookies": {
+    "banner": {
+      "ariaLabel": "Aviso de cookies",
+      "text": "Usamos cookies esenciales para el funcionamiento del sitio y, con tu consentimiento, cookies analíticas para mejorar la experiencia. Puedes aceptar o rechazar las no esenciales.",
+      "accept": "Aceptar",
+      "reject": "Rechazar",
+      "learnMore": "Más información"
+    }
+  },
+  "legal": {
+    "lastUpdated": "Última actualización",
+    "home": "Inicio",
+    "relatedLinks": "Documentos relacionados",
+    "privacy": {
+      "title": "Política de Privacidad",
+      "breadcrumb": "Política de Privacidad",
+      "intro": "En cumplimiento de la Ley N.° 8968 — Ley de Protección de la Persona frente al Tratamiento de sus Datos Personales y su Reglamento Ejecutivo (Decreto N.° 37554-JP), la titular de la clínica Turialba Dental, con domicilio en Turrialba, Cartago, Costa Rica, le informa sobre el tratamiento de sus datos personales.",
+      "s1Title": "1. Responsable del tratamiento",
+      "s1Rows": [["Nombre comercial", "Turialba Dental"], ["Ubicación", "Turrialba, Cartago, Costa Rica"], ["Teléfono / WhatsApp", "2556-2673"], ["Correo electrónico", "info@turialbadental.cr"], ["Sitio web", "www.turialbadental.cr"]],
+      "s2Title": "2. Datos que recopilamos",
+      "s2Id": "Datos de identificación: nombre completo, número de teléfono y correo electrónico (opcional).",
+      "s2Health": "Datos de salud (categoría especial — requieren consentimiento explícito): servicio odontológico solicitado y motivo de consulta proporcionados voluntariamente.",
+      "s2Tech": "Datos técnicos automáticos: dirección IP, tipo de navegador y dispositivo, páginas visitadas (solo si acepta cookies analíticas).",
+      "s3Title": "3. Finalidad del tratamiento",
+      "s3Intro": "Sus datos se usan exclusivamente para:",
+      "s3Items": ["(a) Gestionar y confirmar citas odontológicas.", "(b) Enviar recordatorios y responder consultas.", "(c) Comunicaciones de marketing, solo si usted lo autorizó expresamente.", "(d) Cumplir obligaciones legales en materia sanitaria y fiscal vigentes en Costa Rica."],
+      "s4Title": "4. Base legal",
+      "s4Head": ["Finalidad", "Base legal"],
+      "s4Rows": [["Gestión de citas", "Ejecución de relación de servicios (Art. 22, Ley 8968)"], ["Datos de salud", "Consentimiento explícito del titular (Art. 9, Ley 8968)"], ["Marketing", "Consentimiento voluntario del titular"], ["Obligaciones legales", "Cumplimiento de ley aplicable costarricense"]],
+      "s5Title": "5. Destinatarios",
+      "s5Text": "Sus datos no serán vendidos ni cedidos a terceros con fines comerciales. Solo podrá acceder el personal clínico de Turialba Dental y los proveedores tecnológicos bajo cláusulas de confidencialidad.",
+      "s6Title": "6. Transferencias internacionales",
+      "s6Text": "Si sus datos son procesados por servicios en la nube con servidores fuera de Costa Rica, nos aseguramos de que dichos proveedores cumplan estándares de protección equivalentes a los de la legislación costarricense.",
+      "s7Title": "7. Conservación",
+      "s7Text": "Los datos se conservan durante el tiempo necesario para la prestación del servicio y los plazos exigidos por la legislación vigente. Los datos de marketing se eliminan al retirar el consentimiento.",
+      "s8Title": "8. Sus derechos",
+      "s8Intro": "Conforme a la Ley N.° 8968, usted puede en cualquier momento:",
+      "s8Items": ["Acceder a los datos que tenemos sobre usted.", "Rectificar datos inexactos o incompletos.", "Suprimir sus datos cuando ya no sean necesarios.", "Oponerse al tratamiento con fines de marketing.", "Portabilidad: recibir sus datos en formato electrónico legible."],
+      "s8Contact": "Para ejercer sus derechos contáctenos al 2556-2673 o escriba a info@turialbadental.cr. Respondemos en máximo 5 días hábiles.",
+      "s9Title": "9. Seguridad",
+      "s9Text": "Implementamos cifrado SSL/TLS en la transmisión de todos los datos y medidas organizativas para proteger su información contra acceso no autorizado, pérdida o alteración.",
+      "s10Title": "10. Menores de edad",
+      "s10Text": "No recopilamos datos de personas menores de 18 años sin el consentimiento expreso de su padre, madre o tutor legal.",
+      "s11Title": "11. Cambios en esta política",
+      "s11Text": "Notificaremos cambios significativos a través del sitio web. La fecha de Última actualización al inicio del documento siempre refleja la versión más reciente.",
+      "s12Title": "12. Autoridad de supervisión",
+      "s12Text": "Si considera que sus derechos han sido vulnerados puede acudir a la Agencia de Protección de Datos de los Habitantes (PRODHAB): www.prodhab.go.cr — Tel. 2539-6240."
+    },
+    "terms": {
+      "title": "Términos y Condiciones",
+      "breadcrumb": "Términos y Condiciones",
+      "s1Title": "1. Aceptación",
+      "s1Text": "Al acceder y usar el sitio web de Turialba Dental (www.turialbadental.cr), usted acepta estos Términos. Si no está de acuerdo, le recomendamos no usar el sitio.",
+      "s2Title": "2. Naturaleza del sitio",
+      "s2Text": "Este sitio es de carácter informativo y de gestión de citas. La información publicada no sustituye la consulta presencial con un profesional de la salud.",
+      "s3Title": "3. Solicitud de citas",
+      "s3Text": "El formulario genera una solicitud, no una confirmación automática. La cita queda confirmada cuando la clínica se comunica con usted. Al solicitarla se compromete a:",
+      "s3Items": ["Proporcionar información veraz y completa.", "Notificar con al menos 24 horas de antelación si necesita cancelar o reprogramar.", "Presentarse en la fecha y hora acordadas."],
+      "s4Title": "4. Política de cancelación",
+      "s4Text": "Cancelaciones con menos de 24 horas pueden resultar en pérdida del turno. La no presentación sin aviso puede generar condiciones especiales para reagendar. Las emergencias justificadas se evalúan individualmente.",
+      "s5Title": "5. Alcance de la información médica",
+      "s5Text": "El contenido del sitio es de divulgación general y no constituye consejo médico, diagnóstico ni tratamiento. Siempre consulte directamente a un profesional de la salud.",
+      "s6Title": "6. Propiedad intelectual",
+      "s6Text": "Todo el contenido del sitio (textos, imágenes, diseño, logotipo) es propiedad de Turialba Dental o sus licenciantes. Queda prohibida su reproducción sin autorización escrita previa.",
+      "s7Title": "7. Limitación de responsabilidad",
+      "s7Text": "Turialba Dental no será responsable por errores en el contenido, interrupciones del servicio por causas técnicas, ni daños derivados del uso indebido del sitio.",
+      "s8Title": "8. Privacidad",
+      "s8Text": "El tratamiento de datos personales se rige por nuestra Política de Privacidad, conforme a la Ley N.° 8968 de Costa Rica.",
+      "s9Title": "9. Ley aplicable y jurisdicción",
+      "s9Text": "Estos Términos se rigen por las leyes de Costa Rica. Cualquier disputa se someterá a los tribunales del cantón de Turrialba, Cartago.",
+      "s10Title": "10. Contacto",
+      "s10Text": "Correo: info@turialbadental.cr — Tel.: 2556-2673 — Turrialba, Cartago, Costa Rica."
+    },
+    "cookies": {
+      "title": "Política de Cookies",
+      "breadcrumb": "Política de Cookies",
+      "intro": "Las cookies son pequeños archivos de texto que el sitio guarda en su dispositivo para recordar preferencias y mejorar la experiencia de navegación.",
+      "tableTitle": "Cookies que utilizamos",
+      "tableHeaders": ["Tipo", "Herramienta", "Finalidad", "Duración", "Requiere consentimiento"],
+      "tableRows": [
+        ["Esenciales", "Sesión interna", "Funcionamiento básico del sitio", "Sesión", "No"],
+        ["Analíticas", "Google Analytics", "Medir tráfico de forma anónima", "2 años", "Sí"]
+      ],
+      "managementTitle": "Gestión de cookies",
+      "managementText": "Al ingresar al sitio por primera vez verá un aviso para aceptar o rechazar las cookies no esenciales. También puede gestionarlas desde su navegador:",
+      "browsers": [
+        ["Chrome", "Configuración → Privacidad → Cookies"],
+        ["Safari", "Preferencias → Privacidad"],
+        ["Firefox", "Opciones → Privacidad y seguridad"]
+      ]
+    },
+    "accessibility": {
+      "title": "Declaración de Accesibilidad",
+      "breadcrumb": "Declaración de Accesibilidad",
+      "intro": "Turialba Dental se compromete a garantizar la accesibilidad de su sitio web para todas las personas, independientemente de sus capacidades o el dispositivo que utilicen.",
+      "standard": "Estándar de referencia: WCAG 2.1 nivel AA (Web Content Accessibility Guidelines del W3C).",
+      "measuresTitle": "Medidas implementadas",
+      "perception": "Percepción",
+      "perceptionItems": ["Contraste de color mínimo 4.5:1 para texto normal.", "Texto alternativo en todas las imágenes informativas.", "Animaciones que respetan prefers-reduced-motion.", "Sin contenido que destelle más de 3 veces por segundo."],
+      "operability": "Operabilidad",
+      "operabilityItems": ["Navegación completa por teclado.", "Enlace 'Ir al contenido principal' al inicio de cada página.", "Orden de tabulación lógico.", "Indicador de foco visible en todos los elementos interactivos.", "Áreas táctiles mínimas de 44×44 px en móvil.", "Zoom hasta 200% sin pérdida de contenido."],
+      "understandability": "Comprensibilidad",
+      "understandabilityItems": ["Idioma declarado en el código HTML.", "Etiquetas visibles en todos los campos del formulario.", "Mensajes de error claros y campos requeridos indicados.", "Diseño responsivo para cualquier dispositivo."],
+      "robustness": "Robustez",
+      "robustnessItems": ["Estructura semántica HTML5.", "Roles y atributos ARIA correctamente implementados.", "Compatible con NVDA, VoiceOver y TalkBack."],
+      "limitationsTitle": "Limitaciones conocidas",
+      "limitationsText": "Las fotografías del equipo médico aún son provisionales y serán reemplazadas por imágenes profesionales próximamente.",
+      "contactTitle": "¿Encontró un problema de accesibilidad?",
+      "contactText": "Contáctenos — respondemos en máximo 5 días hábiles y trabajamos en la solución.",
+      "contactInfo": "info@turialbadental.cr — Tel. 2556-2673"
+    }
+  }
 }

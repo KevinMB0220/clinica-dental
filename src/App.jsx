@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -8,8 +8,11 @@ import Login from './pages/Login';
 import Admin from './pages/Admin';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
+import Cookies from './pages/Cookies';
+import Accessibility from './pages/Accessibility';
 import AdminSidebar from './components/AdminSidebar';
 import MobileHeader from './components/MobileHeader';
+import ConsentNotice from './components/ConsentNotice';
 import { AppointmentProvider } from './context/AppointmentContext';
 import { AuthProvider } from './context/AuthContext';
 
@@ -20,7 +23,8 @@ function AppContent() {
 
   return (
     <div className="app-container" style={{ display: 'flex', minHeight: '100vh', width: '100vw', overflowX: 'hidden', background: '#FDFDFF' }}>
-      
+      <a href="#main-content" className="skip-link">Ir al contenido principal</a>
+
       {isAdminPath && (
         <AdminSidebar 
           isHovered={isLeftSidebarHovered} 
@@ -37,7 +41,7 @@ function AppContent() {
         {!isAdminPath && <MobileHeader />}
         {!isAdminPath && <Navbar />}
         
-        <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <main id="main-content" tabIndex="-1" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/booking" element={<Booking />} />
@@ -45,10 +49,13 @@ function AppContent() {
             <Route path="/admin/*" element={<Admin />} />
             <Route path="/privacidad" element={<Privacy />} />
             <Route path="/terminos" element={<Terms />} />
+            <Route path="/cookies" element={<Cookies />} />
+            <Route path="/accesibilidad" element={<Accessibility />} />
           </Routes>
         </main>
 
         {!isAdminPath && <Footer />}
+        {!isAdminPath && <ConsentNotice />}
       </div>
     </div>
   );

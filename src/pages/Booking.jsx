@@ -82,6 +82,9 @@ export default function Booking() {
     name: '', email: '', phone: '', countryCode: '+506', specialty: '',
     date: getMinBookingDate(), time: '', description: ''
   });
+  const [checkPrivacy, setCheckPrivacy] = useState(false);
+  const [checkHealth, setCheckHealth] = useState(false);
+  const [checkMarketing, setCheckMarketing] = useState(false);
 
   const selectedSpecialty = formData.specialty || (Array.isArray(specialties) ? specialties[0] : '');
 
@@ -270,7 +273,25 @@ export default function Booking() {
                   </div>
                 </div>
 
-                <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%', padding: '1rem', fontSize: '1.1rem', fontWeight: 800, marginTop: '1.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1.5rem', padding: '1.25rem', background: 'var(--bg-input)', borderRadius: 'var(--radius-md)' }}>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '0.25rem' }}>
+                    {t('booking.legalNote')}
+                  </p>
+                  <label style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', cursor: 'pointer', fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                    <input type="checkbox" required checked={checkPrivacy} onChange={e => setCheckPrivacy(e.target.checked)} style={{ marginTop: '3px', accentColor: 'var(--primary)', flexShrink: 0, width: '16px', height: '16px' }} />
+                    <span dangerouslySetInnerHTML={{ __html: t('booking.checkboxPrivacy') }} />
+                  </label>
+                  <label style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', cursor: 'pointer', fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                    <input type="checkbox" required checked={checkHealth} onChange={e => setCheckHealth(e.target.checked)} style={{ marginTop: '3px', accentColor: 'var(--primary)', flexShrink: 0, width: '16px', height: '16px' }} />
+                    <span>{t('booking.checkboxHealth')}</span>
+                  </label>
+                  <label style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', cursor: 'pointer', fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                    <input type="checkbox" checked={checkMarketing} onChange={e => setCheckMarketing(e.target.checked)} style={{ marginTop: '3px', accentColor: 'var(--primary)', flexShrink: 0, width: '16px', height: '16px' }} />
+                    <span>{t('booking.checkboxMarketing')}</span>
+                  </label>
+                </div>
+
+                <button type="submit" className="btn btn-primary" disabled={loading || !checkPrivacy || !checkHealth} style={{ width: '100%', padding: '1rem', fontSize: '1.1rem', fontWeight: 800, marginTop: '1rem' }}>
                   {loading ? t('booking.submitting') : t('booking.submit')}
                 </button>
               </motion.form>

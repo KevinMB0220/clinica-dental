@@ -38,11 +38,13 @@ export default function Footer() {
           </div>
           <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-muted)', fontSize: '0.9rem', flexWrap: 'wrap', gap: '1.5rem' }}>
             <div>© {new Date().getFullYear()} Turrialba Dental Care. {t('footer.copyright')}</div>
-            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+            <nav aria-label="Documentos legales" style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
               <Link to="/privacidad" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{t('footer.privacy')}</Link>
               <Link to="/terminos" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{t('footer.terms')}</Link>
+              <Link to="/cookies" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{t('footer.cookies')}</Link>
+              <Link to="/accesibilidad" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{t('footer.accessibility')}</Link>
               <Link to="/login" style={{ color: 'var(--text-muted)', textDecoration: 'none', opacity: 0.6 }}>{t('footer.adminAccess')}</Link>
-            </div>
+            </nav>
           </div>
         </div>
       </footer>
