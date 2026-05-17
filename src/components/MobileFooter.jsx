@@ -6,9 +6,7 @@ export default function MobileFooter() {
   const { t } = useTranslation();
   return (
     <footer className="block lg:hidden" style={{ background: 'var(--bg-card)', padding: '2.5rem 1.5rem 6rem', borderTop: '1px solid var(--border-light)', textAlign: 'center' }}>
-      <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '1rem', color: 'var(--text-main)' }}>
-        Turrialba Dental <span style={{ color: 'var(--primary)' }}>Care</span>
-      </h3>
+      <img src="/logo-clinica.png" alt="Turrialba Dental Care" style={{ height: '80px', width: 'auto', objectFit: 'contain', marginBottom: '1rem', display: 'block', margin: '0 auto 1rem' }} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
           <MapPin size={16} color="var(--primary)" /> {t('footer.mobileLocation')}

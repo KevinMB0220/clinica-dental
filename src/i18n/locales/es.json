@@ -39,7 +39,7 @@
       "orthodontics": { "title": "Ortodoncia Especializada", "desc": "Alineación y mordida", "description": "Alineación dental con brackets convencionales y opciones estéticas. La doctora directora es especialista en ortodoncia con atención directa en clínica." },
       "implants": { "title": "Implantes Dentales", "desc": "Restauración estética", "description": "Implantes dentales permanentes para reemplazar piezas perdidas. Procedimiento a cargo de especialista en implantología." },
       "endodontics": { "title": "Endodoncia (Nervio)", "desc": "Tratamientos de nervio", "description": "Tratamiento de conductos radiculares para salvar piezas dentales afectadas por infecciones o caries profundas." },
-      "pediatric": { "title": "Odontopediatría", "desc": "Atención infantil", "description": "Atención dental especializada para niños en un ambiente amigable y sin miedo. A cargo de la Dra. Alina Quesada." },
+      "pediatric": { "title": "Atención Infantil", "desc": "Niños y adolescentes", "description": "Atención odontológica para niños y adolescentes en un ambiente amigable y sin miedo. A cargo de la Dra. Alina Quesada, odontóloga general." },
       "periodontics": { "title": "Periodoncia", "desc": "Cuidado de encías", "description": "Diagnóstico y tratamiento de enfermedades de las encías y los tejidos de soporte dental." },
       "chiropody": { "title": "Quiropodia (Nuevo)", "desc": "Cuidado de pies", "description": "Cuidado profesional de los pies: extracción de callos, tratamiento de uñas encarnadas y atención podológica. A cargo de Fabiola." },
       "lab": { "title": "Laboratorio Propio", "desc": "Reparaciones inmediatas", "description": "Fabricación de prótesis removibles y fijas. La clínica cuenta con técnico dental propio — resultados el mismo día." }
@@ -56,7 +56,7 @@
     "roles": {
       "orthodontics": "Ortodoncia",
       "general": "Odontología General",
-      "pediatric": "Odontopediatría"
+      "pediatric": "Odontología General · Atención Infantil"
     }
   },
   "testimonials": {

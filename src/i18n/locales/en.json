@@ -39,7 +39,7 @@
       "orthodontics": { "title": "Specialized Orthodontics", "desc": "Alignment & bite correction", "description": "Dental alignment with conventional and aesthetic brackets. Our director is an orthodontics specialist with direct in-clinic care." },
       "implants": { "title": "Dental Implants", "desc": "Aesthetic restoration", "description": "Permanent dental implants to replace missing teeth. Procedure performed by an implantology specialist." },
       "endodontics": { "title": "Endodontics (Root Canal)", "desc": "Root canal treatments", "description": "Root canal treatment to save dental pieces affected by infections or deep cavities." },
-      "pediatric": { "title": "Pediatric Dentistry", "desc": "Children's care", "description": "Specialized dental care for children in a friendly and fear-free environment. Led by Dr. Alina Quesada." },
+      "pediatric": { "title": "Children's Dentistry", "desc": "Children & teens", "description": "Dental care for children and teenagers in a friendly and fear-free environment. Provided by Dr. Alina Quesada, general dentist." },
       "periodontics": { "title": "Periodontics", "desc": "Gum care", "description": "Diagnosis and treatment of gum diseases and dental support tissue conditions." },
       "chiropody": { "title": "Chiropody (New)", "desc": "Foot care", "description": "Professional foot care: callus removal, ingrown nail treatment and podological care. Led by Fabiola." },
       "lab": { "title": "In-House Lab", "desc": "Immediate repairs", "description": "Manufacture of removable and fixed prosthetics. The clinic has its own dental technician — same-day results." }
@@ -56,7 +56,7 @@
     "roles": {
       "orthodontics": "Orthodontics",
       "general": "General Dentistry",
-      "pediatric": "Pediatric Dentistry"
+      "pediatric": "General Dentistry · Children's Care"
     }
   },
   "testimonials": {

@@ -81,6 +81,7 @@ export default function Login() {
         </Link>
 
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+          <img src="/logo-clinica.png" alt="Turrialba Dental Care" style={{ height: '72px', width: 'auto', objectFit: 'contain', marginBottom: '1.5rem', display: 'block', margin: '0 auto 1.5rem' }} />
           <h2 className="login-title" style={{ fontSize: '1.75rem', fontWeight: 900, marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>Acceso Administrativo</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
             Ingrese sus credenciales de acceso.
