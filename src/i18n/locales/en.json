@@ -1,0 +1,125 @@
+{
+  "nav": {
+    "home": "Home",
+    "clinic": "Clinic",
+    "services": "Services",
+    "team": "Team",
+    "bookAppointment": "Book Appointment",
+    "logout": "Sign Out"
+  },
+  "hero": {
+    "badge": "In-House Lab · Evening Hours",
+    "badgeLive": "Turrialba Dental Care",
+    "headline": "More than a smile,",
+    "headlineItalic": "total wellbeing.",
+    "headlineItalicDesktop": "your total wellbeing.",
+    "description": "Certified specialists delivering immediate results with the human care you deserve.",
+    "desktopDescription": "Certified specialists and in-house lab in Turrialba for immediate results with unmatched human care.",
+    "bookBtn": "Book Appointment",
+    "whatsappBtn": "WhatsApp"
+  },
+  "trust": {
+    "night": "Evening Hours until 8:00 PM",
+    "repairs": "Same-Day Repairs",
+    "children": "Pediatric Care"
+  },
+  "gallery": {
+    "title": "Our Facilities",
+    "subtitle": "Dental technology within your reach.",
+    "consulting": "Digital Office",
+    "lab": "Prosthetics Lab"
+  },
+  "services": {
+    "title": "Our",
+    "titleHighlight": "Services",
+    "desktopTitle": "Medical Specialties",
+    "subtitle": "Complete dental specialties all in one place.",
+    "items": {
+      "orthodontics": { "title": "Specialized Orthodontics", "desc": "Alignment & bite correction", "description": "Led by Dr. Sharlene Torres, we correct alignment and bite using the most modern techniques." },
+      "implants": { "title": "Dental Implants", "desc": "Aesthetic restoration", "description": "We restore the functionality and aesthetics of your smile with implantology specialists." },
+      "endodontics": { "title": "Endodontics (Root Canal)", "desc": "Root canal treatments", "description": "Specialists in root canal treatments to save dental pieces and eliminate pain." },
+      "pediatric": { "title": "Pediatric Dentistry", "desc": "Children's care", "description": "Children's care by Dr. Alina Quesada, in a friendly and safe environment." },
+      "periodontics": { "title": "Periodontics", "desc": "Gum care", "description": "Specialized care of gums and supporting tissues for comprehensive oral health." },
+      "chiropody": { "title": "Chiropody (New)", "desc": "Foot care", "description": "Comprehensive foot care service: calluses, ingrown nails and general care." },
+      "lab": { "title": "In-House Lab", "desc": "Immediate repairs", "description": "On-site dental technician for immediate prosthetics and crown repairs." }
+    }
+  },
+  "team": {
+    "title": "Our",
+    "titleHighlight": "Team",
+    "desktopTitle": "Our Medical Team",
+    "subtitle": "Certified specialists ready to serve you.",
+    "director": "Director",
+    "night": "Night Schedule",
+    "specialist": "Specialist",
+    "roles": {
+      "orthodontics": "Orthodontics",
+      "general": "General Dentistry",
+      "pediatric": "Pediatric Dentistry"
+    }
+  },
+  "testimonials": {
+    "title": "What our",
+    "titleItalic": "patients say."
+  },
+  "footer": {
+    "description": "Excellence in dental health with certified specialists and an in-house lab. Committed to your smile and wellbeing in the heart of Turrialba.",
+    "contactTitle": "Contact Us",
+    "specialtiesTitle": "Specialties",
+    "schedule": "Mon - Fri: 8:00 AM - 8:00 PM",
+    "location": "Turrialba, Cartago, Costa Rica",
+    "phone": "2556-2673 (WhatsApp)",
+    "copyright": "All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions",
+    "adminAccess": "Admin Access",
+    "mobileSchedule": "Mon - Fri: 8:00 AM - 8:00 PM",
+    "mobileLocation": "Turrialba, Cartago"
+  },
+  "booking": {
+    "title": "Book your appointment",
+    "titleItalic": "in seconds.",
+    "subtitle": "Select the time that suits you best. Our team will confirm your slot immediately.",
+    "whatsappBtn": "Book via WhatsApp",
+    "phoneTitle": "Phone Support",
+    "phoneHours": "Monday to Friday: 8:00 AM - 8:00 PM",
+    "phoneSaturday": "Saturdays: 9:00 AM - 1:00 PM",
+    "fields": {
+      "name": "Full Name",
+      "namePlaceholder": "e.g. John Smith",
+      "email": "Email Address",
+      "emailPlaceholder": "you@email.com",
+      "phone": "Phone Number",
+      "specialty": "Specialty",
+      "date": "Date",
+      "time": "Time",
+      "timePlaceholder": "Time...",
+      "notes": "Additional Notes",
+      "notesPlaceholder": "Additional details...",
+      "selectDate": "Select date"
+    },
+    "submit": "Book Appointment",
+    "submitting": "Sending...",
+    "successTitle": "Registration Successful!",
+    "successDesc": "We have received your request. Our team will contact you immediately to confirm your appointment details.",
+    "backHome": "Back to Home",
+    "urgentWhatsapp": "In a hurry? Message us on WhatsApp",
+    "specialties": ["Orthodontics", "General Dentistry", "Pediatric Dentistry", "Implants", "Endodontics", "Periodontics", "Chiropody"],
+    "dateFormat": "EEEE, MMMM dd",
+    "mobileTitle": "Book",
+    "mobileTitleHighlight": "your smile.",
+    "mobileSubtitle": "Leave your details and we'll contact you to schedule your appointment.",
+    "mobileWhatsapp": "Book quickly via WhatsApp",
+    "mobileFormTitle": "Or use our form",
+    "mobileConfirm": "Confirm",
+    "mobileSending": "Sending...",
+    "mobileSuccess": "Appointment Requested!",
+    "mobileSuccessDesc": "We'll contact you soon to confirm.",
+    "mobileGoHome": "Go to Home"
+  },
+  "mobileNav": {
+    "home": "Home",
+    "book": "Book"
+  },
+  "backToTop": "Back to top"
+}

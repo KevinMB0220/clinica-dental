@@ -1,32 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const reviews = [
-  {
-    name: "Yuliana Esquivel",
-    date: "Feb 2, 2021",
-    text: "Excelente profesional y persona. Buscaba un lugar que me diera confianza y tranquilidad, lo encontré acá. 100% recomendadas.",
-    rating: 5,
-  },
-  {
-    name: "Brainer Guillen",
-    date: "Jan 2, 2020",
-    text: "Muy contento con el trato, 100 por ciento recomendado. 👍👌",
-    rating: 5,
-  },
-  {
-    name: "Sebastián Quiros",
-    date: "Nov 30, 2019",
-    text: "Excelente servicio y buena atención.",
-    rating: 5,
-  },
-  {
-    name: "Georgina Garcia",
-    date: "Feb 6, 2018",
-    text: "Excelente atención profesional y personal. Súper recomendada.",
-    rating: 5,
-  }
+  { name: "Yuliana Esquivel", date: "Feb 2, 2021", text: "Excelente profesional y persona. Buscaba un lugar que me diera confianza y tranquilidad, lo encontré acá. 100% recomendadas.", rating: 5 },
+  { name: "Brainer Guillen", date: "Jan 2, 2020", text: "Muy contento con el trato, 100 por ciento recomendado. 👍👌", rating: 5 },
+  { name: "Sebastián Quiros", date: "Nov 30, 2019", text: "Excelente servicio y buena atención.", rating: 5 },
+  { name: "Georgina Garcia", date: "Feb 6, 2018", text: "Excelente atención profesional y personal. Súper recomendada.", rating: 5 },
 ];
 
 const FACEBOOK_ICON = (
@@ -36,78 +17,28 @@ const FACEBOOK_ICON = (
 );
 
 export default function Testimonials() {
+  const { t } = useTranslation();
   return (
     <section id="testimonios" style={{ padding: '6rem 0', background: 'var(--bg-page)', position: 'relative', overflow: 'hidden' }}>
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div className="section-title" style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <h2 style={{ fontSize: 'clamp(2rem, 5vw, 2.75rem)', fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 1.2 }}>
-              Qué opinan <br />
-              <span style={{ color: 'var(--primary)', fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 500 }}>nuestros pacientes.</span>
+              {t('testimonials.title')} <br />
+              <span style={{ color: 'var(--primary)', fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 500 }}>{t('testimonials.titleItalic')}</span>
             </h2>
           </motion.div>
         </div>
-
-        {/* Responsive Row: Flex wrap on desktop, Scrollable on mobile */}
-        <div style={{ 
-          display: 'flex', 
-          gap: '1.25rem', 
-          justifyContent: 'center',
-          flexWrap: 'wrap',
-          padding: '1rem 0'
-        }}>
+        <div style={{ display: 'flex', gap: '1.25rem', justifyContent: 'center', flexWrap: 'wrap', padding: '1rem 0' }}>
           {reviews.map((review, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              style={{ 
-                width: '260px',
-                height: '260px', /* Forced square/compact size */
-                padding: '1.75rem', 
-                background: 'rgba(255, 255, 255, 0.85)', 
-                backdropFilter: 'blur(12px)', 
-                border: '1px solid var(--border-light)',
-                borderRadius: '24px',
-                display: 'flex',
-                flexDirection: 'column',
-                textAlign: 'center',
-                boxShadow: 'var(--shadow-card)',
-                position: 'relative'
-              }}
-            >
-              {/* Facebook Icon at top right */}
-              <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem' }}>
-                {FACEBOOK_ICON}
-              </div>
-
+            <motion.div key={index} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} style={{ width: '260px', height: '260px', padding: '1.75rem', background: 'rgba(255, 255, 255, 0.85)', backdropFilter: 'blur(12px)', border: '1px solid var(--border-light)', borderRadius: '24px', display: 'flex', flexDirection: 'column', textAlign: 'center', boxShadow: 'var(--shadow-card)', position: 'relative' }}>
+              <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem' }}>{FACEBOOK_ICON}</div>
               <div style={{ display: 'flex', justifyContent: 'center', gap: '0.15rem', marginBottom: '1.25rem' }}>
-                {[...Array(review.rating)].map((_, i) => (
-                  <Star key={i} size={12} fill="var(--accent)" color="var(--accent)" />
-                ))}
+                {[...Array(review.rating)].map((_, i) => <Star key={i} size={12} fill="var(--accent)" color="var(--accent)" />)}
               </div>
-
               <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <p style={{ 
-                  fontSize: '0.875rem', 
-                  lineHeight: 1.5, 
-                  color: 'var(--text-main)', 
-                  fontWeight: 600,
-                  display: '-webkit-box',
-                  WebkitLineClamp: 5,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden'
-                }}>
-                  "{review.text}"
-                </p>
+                <p style={{ fontSize: '0.875rem', lineHeight: 1.5, color: 'var(--text-main)', fontWeight: 600, display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>"{review.text}"</p>
               </div>
-
               <div style={{ marginTop: '1.25rem' }}>
                 <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '0.1rem', color: 'var(--text-main)' }}>{review.name}</h4>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>{review.date}</div>

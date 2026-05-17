@@ -1,0 +1,125 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "clinic": "Clínica",
+    "services": "Servicios",
+    "team": "Equipo",
+    "bookAppointment": "Agendar cita",
+    "logout": "Salir"
+  },
+  "hero": {
+    "badge": "Laboratorio Propio · Horario Nocturno",
+    "badgeLive": "Turrialba Dental Care",
+    "headline": "Más que una sonrisa,",
+    "headlineItalic": "bienestar total.",
+    "headlineItalicDesktop": "tu bienestar total.",
+    "description": "Especialistas certificados con resultados inmediatos y el trato humano que mereces.",
+    "desktopDescription": "Especialistas certificados y laboratorio propio en Turrialba para resultados inmediatos con un trato humano inigualable.",
+    "bookBtn": "Agendar Cita",
+    "whatsappBtn": "WhatsApp"
+  },
+  "trust": {
+    "night": "Horario Nocturno hasta 8:00 PM",
+    "repairs": "Reparaciones Inmediatas",
+    "children": "Atención Infantil"
+  },
+  "gallery": {
+    "title": "Nuestras Instalaciones",
+    "subtitle": "Tecnología dental a tu alcance.",
+    "consulting": "Consultorio Digital",
+    "lab": "Laboratorio de Prótesis"
+  },
+  "services": {
+    "title": "Nuestros",
+    "titleHighlight": "Servicios",
+    "desktopTitle": "Especialidades Médicas",
+    "subtitle": "Especialidades médicas completas en un solo lugar.",
+    "items": {
+      "orthodontics": { "title": "Ortodoncia Especializada", "desc": "Alineación y mordida", "description": "Dirigido por la Dra. Sharlene Torres, corregimos alineación y mordida con las técnicas más modernas." },
+      "implants": { "title": "Implantes Dentales", "desc": "Restauración estética", "description": "Restauramos la funcionalidad y estética de tu sonrisa con especialistas en implantología." },
+      "endodontics": { "title": "Endodoncia (Nervio)", "desc": "Tratamientos de nervio", "description": "Especialistas en tratamientos de conductos para salvar piezas dentales y eliminar el dolor." },
+      "pediatric": { "title": "Odontopediatría", "desc": "Atención infantil", "description": "Atención infantil a cargo de la Dra. Alina Quesada, en un ambiente amigable y seguro." },
+      "periodontics": { "title": "Periodoncia", "desc": "Cuidado de encías", "description": "Cuidado especializado de las encías y los tejidos de soporte para una salud bucal integral." },
+      "chiropody": { "title": "Quiropodia (Nuevo)", "desc": "Cuidado de pies", "description": "Servicio de atención integral de los pies: callos, uñas encarnadas y cuidado general." },
+      "lab": { "title": "Laboratorio Propio", "desc": "Reparaciones inmediatas", "description": "Técnico dental en planta para reparaciones de prótesis y coronas inmediatas." }
+    }
+  },
+  "team": {
+    "title": "Nuestro",
+    "titleHighlight": "Equipo",
+    "desktopTitle": "Nuestro Equipo Médico",
+    "subtitle": "Especialistas certificados listos para atenderte.",
+    "director": "Directora",
+    "night": "Horario Nocturno",
+    "specialist": "Especialista",
+    "roles": {
+      "orthodontics": "Ortodoncia",
+      "general": "Odontología General",
+      "pediatric": "Odontopediatría"
+    }
+  },
+  "testimonials": {
+    "title": "Qué opinan",
+    "titleItalic": "nuestros pacientes."
+  },
+  "footer": {
+    "description": "Excelencia en salud dental con especialistas certificados y laboratorio propio. Comprometidos con tu sonrisa y bienestar en el corazón de Turrialba.",
+    "contactTitle": "Contacto Directo",
+    "specialtiesTitle": "Especialidades",
+    "schedule": "Lun - Vie: 8:00 AM - 8:00 PM",
+    "location": "Turrialba, Cartago, Costa Rica",
+    "phone": "2556-2673 (WhatsApp)",
+    "copyright": "Todos los derechos reservados.",
+    "privacy": "Privacidad",
+    "terms": "Términos y Condiciones",
+    "adminAccess": "Acceso Administrativo",
+    "mobileSchedule": "Lun - Vie: 8:00 AM - 8:00 PM",
+    "mobileLocation": "Turrialba, Cartago"
+  },
+  "booking": {
+    "title": "Reserva tu cita",
+    "titleItalic": "en segundos.",
+    "subtitle": "Selecciona el horario que mejor te convenga. Nuestro equipo confirmará tu espacio de inmediato.",
+    "whatsappBtn": "Agendar por WhatsApp",
+    "phoneTitle": "Atención Telefónica",
+    "phoneHours": "Lunes a Viernes: 8:00 AM - 8:00 PM",
+    "phoneSaturday": "Sábados: 9:00 AM - 1:00 PM",
+    "fields": {
+      "name": "Nombre Completo",
+      "namePlaceholder": "Ej. Juan Pérez",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "tu@correo.com",
+      "phone": "Teléfono",
+      "specialty": "Especialidad",
+      "date": "Fecha",
+      "time": "Hora",
+      "timePlaceholder": "Hora...",
+      "notes": "Observaciones",
+      "notesPlaceholder": "Detalles adicionales...",
+      "selectDate": "Seleccionar fecha"
+    },
+    "submit": "Agendar Cita",
+    "submitting": "Enviando...",
+    "successTitle": "¡Registro Exitoso!",
+    "successDesc": "Hemos recibido tu solicitud, nuestro equipo te contactará de inmediato para confirmar los detalles de tu cita.",
+    "backHome": "Volver al Inicio",
+    "urgentWhatsapp": "¿Tienes prisa? Escríbenos por WhatsApp",
+    "specialties": ["Ortodoncia", "Odontología General", "Odontopediatría", "Implantes", "Endodoncia", "Periodoncia", "Quiropodia"],
+    "dateFormat": "EEEE, dd 'de' MMMM",
+    "mobileTitle": "Reserva",
+    "mobileTitleHighlight": "tu sonrisa.",
+    "mobileSubtitle": "Déjanos tus datos y te contactaremos para agendar tu cita.",
+    "mobileWhatsapp": "Agendar rápido por WhatsApp",
+    "mobileFormTitle": "O usa nuestro formulario",
+    "mobileConfirm": "Confirmar",
+    "mobileSending": "Enviando...",
+    "mobileSuccess": "¡Cita Solicitada!",
+    "mobileSuccessDesc": "Te contactaremos pronto para confirmar.",
+    "mobileGoHome": "Ir al Inicio"
+  },
+  "mobileNav": {
+    "home": "Inicio",
+    "book": "Citas"
+  },
+  "backToTop": "Volver arriba"
+}

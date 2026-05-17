@@ -2,27 +2,14 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import DatePicker, { registerLocale } from 'react-datepicker';
-import { es } from 'date-fns/locale/es';
+import { es as esLocale } from 'date-fns/locale/es';
+import { enUS } from 'date-fns/locale/en-US';
 import confetti from 'canvas-confetti';
+import { useTranslation } from 'react-i18next';
 import "react-datepicker/dist/react-datepicker.css";
 
-registerLocale('es', es);
-
-const DateInputCustom = React.forwardRef(({ value, onClick }, ref) => (
-  <div
-    onClick={onClick}
-    ref={ref}
-    style={{ background: 'var(--bg-input)', border: '1.5px solid transparent', borderRadius: '12px', padding: '0.75rem 1rem', fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
-  >
-    <span style={{ color: value ? 'var(--text-main)' : 'var(--text-muted)' }}>{value || 'Seleccionar fecha'}</span>
-    <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>📅</span>
-  </div>
-));
-DateInputCustom.displayName = 'DateInputCustom';
-
-const specialties = [
-  'Ortodoncia', 'Odontología General', 'Odontopediatría', 'Implantes', 'Endodoncia', 'Periodoncia', 'Quiropodia'
-];
+registerLocale('es', esLocale);
+registerLocale('en', enUS);
 
 const countryCodes = [
   { code: '+506', label: 'CR', flag: '🇨🇷' },
@@ -83,13 +70,32 @@ const getMinBookingDate = () => {
 
 export default function Booking() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const specialties = t('booking.specialties', { returnObjects: true });
+  const dateFormat = t('booking.dateFormat');
+  const dpLocale = i18n.language?.startsWith('en') ? 'en' : 'es';
+
   const [formData, setFormData] = useState({
-    name: '', email: '', phone: '', countryCode: '+506', specialty: specialties[0],
+    name: '', email: '', phone: '', countryCode: '+506', specialty: '',
     date: getMinBookingDate(), time: '', description: ''
   });
+
+  const selectedSpecialty = formData.specialty || (Array.isArray(specialties) ? specialties[0] : '');
+
+  const DateInputCustom = React.forwardRef(({ value, onClick }, ref) => (
+    <div
+      onClick={onClick}
+      ref={ref}
+      style={{ background: 'var(--bg-input)', border: '1.5px solid transparent', borderRadius: '12px', padding: '0.75rem 1rem', fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
+    >
+      <span style={{ color: value ? 'var(--text-main)' : 'var(--text-muted)' }}>{value || t('booking.fields.selectDate')}</span>
+      <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>📅</span>
+    </div>
+  ));
+  DateInputCustom.displayName = 'DateInputCustom';
 
   const triggerConfetti = () => {
     const duration = 3 * 1000;
@@ -117,9 +123,9 @@ export default function Booking() {
   };
 
   return (
-    <div style={{ 
-      minHeight: 'calc(100vh - 90px)', 
-      background: '#FDFDFF', 
+    <div style={{
+      minHeight: 'calc(100vh - 90px)',
+      background: '#FDFDFF',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -127,16 +133,16 @@ export default function Booking() {
       position: 'relative',
       overflow: 'hidden'
     }}>
-      {/* Background Decor (Matching Login/Home) */}
-      <motion.div 
+      {/* Background Decor */}
+      <motion.div
         animate={{ scale: [1, 1.1, 1], rotate: [0, 45, 0], x: [0, 30, 0], y: [0, -30, 0] }}
         transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        style={{ position: 'absolute', top: '-15%', right: '-10%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(41, 166, 67, 0.04) 0%, transparent 70%)', zIndex: 0 }} 
+        style={{ position: 'absolute', top: '-15%', right: '-10%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(41, 166, 67, 0.04) 0%, transparent 70%)', zIndex: 0 }}
       />
-      <motion.div 
+      <motion.div
         animate={{ scale: [1.1, 1, 1.1], rotate: [0, -45, 0], x: [0, -30, 0], y: [0, 30, 0] }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        style={{ position: 'absolute', bottom: '-15%', left: '-10%', width: '700px', height: '700px', background: 'radial-gradient(circle, rgba(182, 214, 65, 0.03) 0%, transparent 70%)', zIndex: 0 }} 
+        style={{ position: 'absolute', bottom: '-15%', left: '-10%', width: '700px', height: '700px', background: 'radial-gradient(circle, rgba(182, 214, 65, 0.03) 0%, transparent 70%)', zIndex: 0 }}
       />
 
       <style>{`
@@ -157,39 +163,39 @@ export default function Booking() {
         }
       `}</style>
 
-      <div className="container booking-container" style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
-        gap: '6rem', /* Increased gap for separation */
-        alignItems: 'center', 
+      <div className="container booking-container" style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+        gap: '6rem',
+        alignItems: 'center',
         maxWidth: '1200px',
         margin: '0 auto',
         position: 'relative',
         zIndex: 1
       }}>
-        
+
         {/* INFO COLUMN */}
         <div className="booking-info">
           <h1 style={{ fontSize: 'clamp(2.2rem, 5vw, 3rem)', fontWeight: 900, marginBottom: '1rem', letterSpacing: '-0.04em', lineHeight: 1.1 }}>
-            Reserva tu cita <br />
-            <span style={{ color: 'var(--primary)', fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 500 }}>en segundos.</span>
+            {t('booking.title')} <br />
+            <span style={{ color: 'var(--primary)', fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 500 }}>{t('booking.titleItalic')}</span>
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginBottom: '2rem', maxWidth: '400px', lineHeight: 1.5 }}>
-            Selecciona el horario que mejor te convenga. Nuestro equipo confirmará tu espacio de inmediato.
+            {t('booking.subtitle')}
           </p>
-          
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
              <a href="https://wa.me/50625562673" target="_blank" rel="noreferrer" className="btn btn-primary whatsapp-btn" style={{ width: 'fit-content', padding: '1rem 2rem' }}>
-                Agendar por WhatsApp
+                {t('booking.whatsappBtn')}
              </a>
-             
+
              <div className="info-box" style={{ padding: '1.25rem', background: 'white', borderRadius: '24px', maxWidth: '350px', border: '1px solid var(--border-light)', boxShadow: 'var(--shadow-card)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                   <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>Atención Telefónica</span>
+                   <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>{t('booking.phoneTitle')}</span>
                 </div>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500, paddingLeft: '2.75rem' }}>
-                  Lunes a Viernes: 8:00 AM - 8:00 PM <br />
-                  Sábados: 9:00 AM - 1:00 PM
+                  {t('booking.phoneHours')} <br />
+                  {t('booking.phoneSaturday')}
                 </p>
              </div>
           </div>
@@ -199,7 +205,7 @@ export default function Booking() {
         <div className="dashboard-card">
           <AnimatePresence mode="wait">
             {!submitted ? (
-              <motion.form 
+              <motion.form
                 key="form"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -208,17 +214,17 @@ export default function Booking() {
               >
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div style={{ gridColumn: 'span 2' }}>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.4rem', display: 'block' }}>Nombre Completo</label>
-                    <input type="text" className="form-control" placeholder="Ej. Juan Pérez" required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
+                    <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.4rem', display: 'block' }}>{t('booking.fields.name')}</label>
+                    <input type="text" className="form-control" placeholder={t('booking.fields.namePlaceholder')} required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
                   </div>
 
                   <div style={{ gridColumn: 'span 2' }}>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.4rem', display: 'block' }}>Correo Electrónico</label>
-                    <input type="email" className="form-control" placeholder="tu@correo.com" required value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
+                    <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.4rem', display: 'block' }}>{t('booking.fields.email')}</label>
+                    <input type="email" className="form-control" placeholder={t('booking.fields.emailPlaceholder')} required value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
                   </div>
 
                   <div style={{ gridColumn: 'span 2' }}>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.4rem', display: 'block' }}>Teléfono</label>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.4rem', display: 'block' }}>{t('booking.fields.phone')}</label>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <select style={{ width: '100px', borderRadius: '12px', background: 'var(--bg-input)', border: 'none', fontWeight: 700, fontSize: '0.85rem' }} value={formData.countryCode} onChange={(e) => setFormData({...formData, countryCode: e.target.value})}>
                         {countryCodes.map(c => <option key={c.label + c.code} value={c.code}>{c.flag} {c.code}</option>)}
@@ -228,60 +234,60 @@ export default function Booking() {
                   </div>
 
                   <div style={{ gridColumn: 'span 2' }}>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.4rem', display: 'block' }}>Especialidad</label>
-                    <select className="form-control" value={formData.specialty} onChange={(e) => setFormData({...formData, specialty: e.target.value})}>
-                      {specialties.map(s => <option key={s} value={s}>{s}</option>)}
+                    <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.4rem', display: 'block' }}>{t('booking.fields.specialty')}</label>
+                    <select className="form-control" value={selectedSpecialty} onChange={(e) => setFormData({...formData, specialty: e.target.value})}>
+                      {Array.isArray(specialties) && specialties.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '1rem', gridColumn: 'span 2' }}>
                     <div>
-                      <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.4rem', display: 'block' }}>Fecha</label>
+                      <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.4rem', display: 'block' }}>{t('booking.fields.date')}</label>
                       <DatePicker
                         selected={formData.date}
                         onChange={(date) => {
                           const avail = getAvailableSlots(date, timeSlots);
                           setFormData({ ...formData, date, time: avail.includes(formData.time) ? formData.time : '' });
                         }}
-                        locale="es"
-                        dateFormat="EEEE, dd 'de' MMMM"
+                        locale={dpLocale}
+                        dateFormat={dateFormat}
                         minDate={getMinBookingDate()}
                         customInput={<DateInputCustom />}
                       />
                     </div>
                     <div>
-                      <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.4rem', display: 'block' }}>Hora</label>
+                      <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.4rem', display: 'block' }}>{t('booking.fields.time')}</label>
                       <select className="form-control" required value={formData.time} onChange={(e) => setFormData({...formData, time: e.target.value})}>
-                        <option value="">Hora...</option>
-                        {getAvailableSlots(formData.date, timeSlots).map(t => <option key={t} value={t}>{t}</option>)}
+                        <option value="">{t('booking.fields.timePlaceholder')}</option>
+                        {getAvailableSlots(formData.date, timeSlots).map(slot => <option key={slot} value={slot}>{slot}</option>)}
                       </select>
                     </div>
                   </div>
 
                   <div style={{ gridColumn: 'span 2' }}>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.4rem', display: 'block' }}>Observaciones</label>
-                    <textarea className="form-control" placeholder="Detalles adicionales..." rows="1" value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} style={{ resize: 'none' }}></textarea>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.4rem', display: 'block' }}>{t('booking.fields.notes')}</label>
+                    <textarea className="form-control" placeholder={t('booking.fields.notesPlaceholder')} rows="1" value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} style={{ resize: 'none' }}></textarea>
                   </div>
                 </div>
 
                 <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%', padding: '1rem', fontSize: '1.1rem', fontWeight: 800, marginTop: '1.5rem' }}>
-                  {loading ? 'Enviando...' : 'Agendar Cita'}
+                  {loading ? t('booking.submitting') : t('booking.submit')}
                 </button>
               </motion.form>
             ) : (
-              <motion.div 
+              <motion.div
                 key="success"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 style={{ textAlign: 'center', padding: '3rem 0' }}
               >
-                <h2 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: '1rem', color: 'var(--text-main)' }}>¡Registro Exitoso!</h2>
+                <h2 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: '1rem', color: 'var(--text-main)' }}>{t('booking.successTitle')}</h2>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '2.5rem', fontSize: '1rem', fontWeight: 500, lineHeight: 1.5 }}>
-                  Hemos recibido tu solicitud, nuestro equipo te contactará de inmediato para confirmar los detalles de tu cita.
+                  {t('booking.successDesc')}
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <button onClick={() => navigate('/')} className="btn btn-primary" style={{ width: '100%', padding: '1rem' }}>Volver al Inicio</button>
-                  <a href="https://wa.me/50625562673" target="_blank" rel="noreferrer" style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 700, textDecoration: 'none' }}>¿Tienes prisa? Escríbenos por WhatsApp</a>
+                  <button onClick={() => navigate('/')} className="btn btn-primary" style={{ width: '100%', padding: '1rem' }}>{t('booking.backHome')}</button>
+                  <a href="https://wa.me/50625562673" target="_blank" rel="noreferrer" style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 700, textDecoration: 'none' }}>{t('booking.urgentWhatsapp')}</a>
                 </div>
               </motion.div>
             )}

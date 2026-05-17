@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 
 function ProfessionalToothIcon() {
   return (
     <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M20 2C16 2 12 3 10 5C8 7 7 10 7 13C7 18 9 22 11 26C12 28 13 31 15 34C16 36 17.5 38 20 38C22.5 38 24 36 25 34C27 31 28 28 29 26C31 22 33 18 33 13C33 10 32 7 30 5C28 3 24 2 20 2ZM20 30C18 30 17 28 16 26C15 24 14 21 14 18C14 15 15 13 17 11C19 9 21 9 23 11C25 13 26 15 26 18C26 21 25 24 24 26C23 28 22 30 20 30Z"
-        fill="var(--primary)" />
+      <path d="M20 2C16 2 12 3 10 5C8 7 7 10 7 13C7 18 9 22 11 26C12 28 13 31 15 34C16 36 17.5 38 20 38C22.5 38 24 36 25 34C27 31 28 28 29 26C31 22 33 18 33 13C33 10 32 7 30 5C28 3 24 2 20 2ZM20 30C18 30 17 28 16 26C15 24 14 21 14 18C14 15 15 13 17 11C19 9 21 9 23 11C25 13 26 15 26 18C26 21 25 24 24 26C23 28 22 30 20 30Z" fill="var(--primary)" />
       <path d="M20 10C18 10 16 11.5 16 14C16 16.5 17.5 18 20 18C22.5 18 24 16.5 24 14C24 11.5 22 10 20 10Z" fill="white" fillOpacity="0.8" />
     </svg>
   );
@@ -16,13 +17,13 @@ function ProfessionalToothIcon() {
 export default function Navbar() {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const { t } = useTranslation();
   const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
     const handleScroll = () => {
       const sections = ['home', 'clinica', 'servicios', 'equipo'];
       const scrollPosition = window.scrollY + 150;
-
       for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
@@ -35,7 +36,6 @@ export default function Navbar() {
       }
       if (window.scrollY < 100) setActiveSection('home');
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -47,10 +47,10 @@ export default function Navbar() {
   }, [location]);
 
   const navItems = [
-    { id: 'home', label: 'Inicio', path: '/' },
-    { id: 'clinica', label: 'Clínica', path: '/#clinica' },
-    { id: 'servicios', label: 'Servicios', path: '/#servicios' },
-    { id: 'equipo', label: 'Equipo', path: '/#equipo' },
+    { id: 'home', label: t('nav.home'), path: '/' },
+    { id: 'clinica', label: t('nav.clinic'), path: '/#clinica' },
+    { id: 'servicios', label: t('nav.services'), path: '/#servicios' },
+    { id: 'equipo', label: t('nav.team'), path: '/#equipo' },
   ];
 
   return (
@@ -72,13 +72,8 @@ export default function Navbar() {
                     e.preventDefault();
                     if (location.pathname === '/') {
                       window.scrollTo({ top: 0, behavior: 'smooth' });
-                    } else {
-                      navigate('/');
                     }
                     setActiveSection('home');
-                  } else if (location.pathname !== '/') {
-                    // Si no estamos en home, dejamos que el Link (o <a>) navegue a /#section
-                    // Pero para asegurar, podemos forzar la navegación
                   }
                 }}
               >
@@ -97,12 +92,13 @@ export default function Navbar() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           {user && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', paddingRight: '1rem' }}>
-              <button onClick={logout} style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>Salir</button>
-            </div>
+            <button onClick={logout} style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>
+              {t('nav.logout')}
+            </button>
           )}
+          <LanguageSwitcher />
           <Link to="/booking" className="btn btn-primary" style={{ padding: '0.7rem 1.4rem', fontSize: '0.85rem' }}>
-            Agendar cita
+            {t('nav.bookAppointment')}
           </Link>
         </div>
       </div>
