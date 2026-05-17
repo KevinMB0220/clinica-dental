@@ -5,14 +5,6 @@ import { useTranslation } from 'react-i18next';
 const WHATSAPP_LINK = "https://wa.me/50625562673";
 const HERO_IMAGE = "/assets/hero-luxury.png";
 
-const servicesList = [
-  "Ortodoncia", "Implantes", "Endodoncia", "Odontopediatría", "Periodoncia", "Quiropodia",
-  "Estética Dental", "Limpieza Profunda", "Cirugía", "Laboratorio Propio", "Prótesis Inmediata",
-  "Blanqueamiento", "Rayos X", "Diseño de Sonrisa", "Coronas", "Carillas"
-];
-
-const marqueeRow1 = [...servicesList];
-const marqueeRow2 = [...servicesList].reverse();
 
 const SPECIALTY_KEYS = ['orthodontics', 'implants', 'endodontics', 'pediatric', 'periodontics', 'chiropody', 'lab'];
 
@@ -26,6 +18,10 @@ import BackToTop from '../components/BackToTop';
 
 export default function Home() {
   const { t } = useTranslation();
+
+  const servicesList = t('heroMarquee', { returnObjects: true });
+  const marqueeRow1 = [...servicesList];
+  const marqueeRow2 = [...servicesList].reverse();
 
   const galleryItems = [
     { titleKey: 'gallery.consulting', img: '/assets/hero-luxury.png' },

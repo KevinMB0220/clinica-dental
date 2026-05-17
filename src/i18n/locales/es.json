@@ -7,6 +7,7 @@
     "bookAppointment": "Agendar cita",
     "logout": "Salir"
   },
+  "heroMarquee": ["Ortodoncia", "Implantes", "Endodoncia", "Odontopediatría", "Periodoncia", "Quiropodia", "Estética Dental", "Limpieza Profunda", "Cirugía", "Laboratorio Propio", "Prótesis Inmediata", "Blanqueamiento", "Rayos X", "Diseño de Sonrisa", "Coronas", "Carillas"],
   "hero": {
     "badge": "Laboratorio Propio · Horario Nocturno",
     "badgeLive": "Turrialba Dental Care",

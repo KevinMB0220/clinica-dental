@@ -7,6 +7,7 @@
     "bookAppointment": "Book Appointment",
     "logout": "Sign Out"
   },
+  "heroMarquee": ["Orthodontics", "Implants", "Endodontics", "Pediatric Dentistry", "Periodontics", "Chiropody", "Aesthetic Dentistry", "Deep Cleaning", "Surgery", "In-House Lab", "Immediate Prosthetics", "Whitening", "X-Rays", "Smile Design", "Crowns", "Veneers"],
   "hero": {
     "badge": "In-House Lab · Evening Hours",
     "badgeLive": "Turrialba Dental Care",
