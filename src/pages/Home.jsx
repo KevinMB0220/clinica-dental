@@ -36,6 +36,7 @@ import MobileGallery from '../components/MobileGallery';
 import MobileServices from '../components/MobileServices';
 import MobileTeam from '../components/MobileTeam';
 import Testimonials from '../components/Testimonials';
+import BackToTop from '../components/BackToTop';
 
 export default function Home() {
   return (
@@ -249,6 +250,8 @@ export default function Home() {
       </a>
 
       </div> {/* END DESKTOP EXPERIENCE */}
+
+      <BackToTop />
     </div>
   );
 }
